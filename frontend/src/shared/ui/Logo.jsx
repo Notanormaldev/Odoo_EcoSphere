@@ -26,41 +26,35 @@ export default function Logo({ size = 32, withText = true, variant = 'dark', cla
         aria-hidden="true"
         style={{ flexShrink: 0 }}
       >
-        <defs>
-          <linearGradient id="eco-g1" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#2D5016" />
-            <stop offset="100%" stopColor="#8ABF5C" />
-          </linearGradient>
-        </defs>
         {/* Outer globe ring */}
-        <circle cx="32" cy="32" r="27" stroke="url(#eco-g1)" strokeWidth="3.2" />
+        <circle cx="32" cy="32" r="27" stroke={accentColor} strokeWidth="3.2" />
         {/* Top leaf arc */}
         <path
           d="M 8 26 Q 20 10 44 16 Q 32 8 8 26 Z"
-          stroke="url(#eco-g1)" strokeWidth="2.2"
+          stroke={accentColor} strokeWidth="2.2"
           strokeLinecap="round" strokeLinejoin="round"
         />
         {/* Middle-left leaf */}
         <path
           d="M 8 38 Q 18 22 28 50 Q 14 44 8 38 Z"
-          stroke="url(#eco-g1)" strokeWidth="2.2"
+          stroke={accentColor} strokeWidth="2.2"
           strokeLinecap="round" strokeLinejoin="round"
         />
         {/* Middle-right leaf */}
         <path
           d="M 56 38 Q 46 22 36 50 Q 50 44 56 38 Z"
-          stroke="url(#eco-g1)" strokeWidth="2.2"
+          stroke={accentColor} strokeWidth="2.2"
           strokeLinecap="round" strokeLinejoin="round"
         />
         {/* Equator curve */}
         <path
           d="M 5 34 Q 32 44 59 34"
-          stroke="url(#eco-g1)" strokeWidth="2" strokeLinecap="round"
+          stroke={accentColor} strokeWidth="2" strokeLinecap="round"
         />
         {/* Vertical meridian */}
         <path
           d="M 32 5 Q 40 32 32 59"
-          stroke="url(#eco-g1)" strokeWidth="2" strokeLinecap="round"
+          stroke={accentColor} strokeWidth="2" strokeLinecap="round"
         />
       </svg>
 

@@ -125,12 +125,13 @@ const startServer = async () => {
     await connectDB();
     connectRedis();
 
-    // Auto-seed database if empty (crucial for zero-config Render database deployments)
+    // Auto-seed database if admin/harsh seed accounts are missing (crucial for cloud deployments)
     try {
       const User = (await import('./src/models/User.js')).default;
-      const userCount = await User.countDocuments();
-      if (userCount === 0) {
-        logger.info('🌱 No users found in database. Auto-seeding initial ESG data...');
+      const adminExists = await User.findOne({ email: 'admin@ecosphere.com' });
+      const harshExists = await User.findOne({ email: 'harsh@ecosphere.com' });
+      if (!adminExists || !harshExists) {
+        logger.info('🌱 Seed users missing. Auto-seeding initial ESG data...');
         const { seedData } = await import('./src/scripts/seed.js');
         await seedData(false);
         logger.info('✅ Auto-seeding completed successfully!');
