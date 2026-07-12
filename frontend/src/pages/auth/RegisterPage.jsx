@@ -19,7 +19,8 @@ export default function RegisterPage() {
       navigate('/login');
     },
     onError: (err) => {
-      toast.error(err.response?.data?.message || 'Registration failed');
+      const details = err.response?.data?.errors?.[0]?.message;
+      toast.error(details || err.response?.data?.message || 'Registration failed');
     },
   });
 
