@@ -13,7 +13,7 @@ import Challenge from '../models/Challenge.js';
 
 dotenv.config({ path: './.env' });
 
-const MONGO_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/ecosphere';
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/ecosphere';
 
 const seedData = async () => {
   try {
@@ -24,6 +24,7 @@ const seedData = async () => {
     // Clear existing data
     console.log('Clearing old collections...');
     await Promise.all([
+      User.deleteMany({}),
       Department.deleteMany({}),
       Category.deleteMany({}),
       EmissionFactor.deleteMany({}),
@@ -45,13 +46,24 @@ const seedData = async () => {
       scoreWeights: { environmental: 0.4, social: 0.3, governance: 0.3 }
     });
 
+    // 1b. Create Admin User
+    console.log('Seeding Admin User...');
+    const adminUser = await User.create({
+      name: 'EcoSphere Admin',
+      email: 'admin@ecosphere.com',
+      password: 'password123',
+      role: 'admin',
+      isEmailVerified: true,
+      isActive: true,
+    });
+
     // 2. Create Departments
     console.log('Seeding Departments...');
     const depts = await Department.create([
-      { name: 'Human Resources', code: 'HR', employeeCount: 15, status: 'active' },
-      { name: 'Engineering', code: 'ENG', employeeCount: 45, status: 'active' },
-      { name: 'Sales & Marketing', code: 'SALES', employeeCount: 25, status: 'active' },
-      { name: 'Operations', code: 'OPS', employeeCount: 30, status: 'active' },
+      { name: 'Human Resources', code: 'HR', employeeCount: 15, status: 'active', head: adminUser._id },
+      { name: 'Engineering', code: 'ENG', employeeCount: 45, status: 'active', head: adminUser._id },
+      { name: 'Sales & Marketing', code: 'SALES', employeeCount: 25, status: 'active', head: adminUser._id },
+      { name: 'Operations', code: 'OPS', employeeCount: 30, status: 'active', head: adminUser._id },
     ]);
 
     const hrDept = depts[0];
@@ -60,63 +72,63 @@ const seedData = async () => {
     // 3. Create Categories
     console.log('Seeding Categories...');
     const categories = await Category.create([
-      { name: 'Energy', type: 'Environmental', icon: '⚡', description: 'Electricity and heating consumption' },
-      { name: 'Transport', type: 'Environmental', icon: '🚗', description: 'Business travel and commuting' },
-      { name: 'Waste & Water', type: 'Environmental', icon: '💧', description: 'Water usage and recycling waste' },
-      { name: 'Community', type: 'Social', icon: '🤝', description: 'Volunteering and local outreach' },
-      { name: 'Well-being', type: 'Social', icon: '❤️', description: 'Employee health and safety' },
-      { name: 'Ethics', type: 'Governance', icon: '📋', description: 'Corporate governance and compliance' },
+      { name: 'Energy', type: 'Emission', icon: '⚡', description: 'Electricity and heating consumption' },
+      { name: 'Transport', type: 'Emission', icon: '🚗', description: 'Business travel and commuting' },
+      { name: 'Waste & Water', type: 'Emission', icon: '💧', description: 'Water usage and recycling waste' },
+      { name: 'Community', type: 'CSR Activity', icon: '🤝', description: 'Volunteering and local outreach' },
+      { name: 'Well-being', type: 'CSR Activity', icon: '❤️', description: 'Employee health and safety' },
+      { name: 'Ethics', type: 'General', icon: '📋', description: 'Corporate governance and compliance' },
     ]);
 
     // 4. Create Emission Factors
     console.log('Seeding Emission Factors...');
     await EmissionFactor.create([
-      { name: 'Grid Electricity', category: categories[0]._id, factor: 0.85, unit: 'kg CO2e / kWh', scope: 'Scope 2', source: 'National Grid GHG report' },
-      { name: 'Natural Gas Heating', category: categories[0]._id, factor: 2.02, unit: 'kg CO2e / m3', scope: 'Scope 1', source: 'EPA Emission Factors Guide' },
-      { name: 'Petrol Car Commute', category: categories[1]._id, factor: 0.21, unit: 'kg CO2e / km', scope: 'Scope 3', source: 'DEFRA GHG factors' },
-      { name: 'Flights (Short haul)', category: categories[1]._id, factor: 0.15, unit: 'kg CO2e / km', scope: 'Scope 3', source: 'ICAO Carbon Calculator' },
-      { name: 'Water Usage', category: categories[2]._id, factor: 0.34, unit: 'kg CO2e / m3', scope: 'Scope 3', source: 'Water UK statistics' },
+      { name: 'Grid Electricity', category: 'Energy', factor: 0.85, unit: 'kg CO2e / kWh', scope: 'Scope 2', source: 'National Grid GHG report' },
+      { name: 'Natural Gas Heating', category: 'Energy', factor: 2.02, unit: 'kg CO2e / m3', scope: 'Scope 1', source: 'EPA Emission Factors Guide' },
+      { name: 'Petrol Car Commute', category: 'Fleet', factor: 0.21, unit: 'kg CO2e / km', scope: 'Scope 3', source: 'DEFRA GHG factors' },
+      { name: 'Flights (Short haul)', category: 'Fleet', factor: 0.15, unit: 'kg CO2e / km', scope: 'Scope 3', source: 'ICAO Carbon Calculator' },
+      { name: 'Water Usage', category: 'Waste', factor: 0.34, unit: 'kg CO2e / m3', scope: 'Scope 3', source: 'Water UK statistics' },
     ]);
 
     // 5. Create Badges
     console.log('Seeding Badges...');
     await Badge.create([
-      { name: 'Green Recruit', description: 'Complete email verification and start your sustainability journey', icon: '🌱', rarity: 'Common', unlockRule: { type: 'xp_threshold', threshold: 100, description: 'Reach 100 XP' } },
-      { name: 'Eco Champion', description: 'Unlock 500 XP to prove your environmental dedication', icon: '🌿', rarity: 'Uncommon', unlockRule: { type: 'xp_threshold', threshold: 500, description: 'Reach 500 XP' } },
-      { name: 'Sustainability Sentinel', description: 'Earn 1500 XP by actively participating across MERN platform', icon: '🛡️', rarity: 'Rare', unlockRule: { type: 'xp_threshold', threshold: 1500, description: 'Reach 1500 XP' } },
-      { name: 'CSR Pioneer', description: 'Complete 3 approved community or CSR volunteering activities', icon: '🤝', rarity: 'Epic', unlockRule: { type: 'csr_activities', threshold: 3, description: 'Complete 3 CSR activities' } },
-      { name: 'Challenge Master', description: 'Complete 5 organizational sustainability challenges', icon: '🏆', rarity: 'Legendary', unlockRule: { type: 'challenges_completed', threshold: 5, description: 'Complete 5 challenges' } },
+      { name: 'Green Recruit', description: 'Complete email verification and start your sustainability journey', icon: '🌱', rarity: 'Common', unlockRule: { type: 'xp_threshold', threshold: 100, description: 'Reach 100 XP' }, createdBy: adminUser._id },
+      { name: 'Eco Champion', description: 'Unlock 500 XP to prove your environmental dedication', icon: '🌿', rarity: 'Uncommon', unlockRule: { type: 'xp_threshold', threshold: 500, description: 'Reach 500 XP' }, createdBy: adminUser._id },
+      { name: 'Sustainability Sentinel', description: 'Earn 1500 XP by actively participating across MERN platform', icon: '🛡️', rarity: 'Rare', unlockRule: { type: 'xp_threshold', threshold: 1500, description: 'Reach 1500 XP' }, createdBy: adminUser._id },
+      { name: 'CSR Pioneer', description: 'Complete 3 approved community or CSR volunteering activities', icon: '🤝', rarity: 'Epic', unlockRule: { type: 'csr_activities', threshold: 3, description: 'Complete 3 CSR activities' }, createdBy: adminUser._id },
+      { name: 'Challenge Master', description: 'Complete 5 organizational sustainability challenges', icon: '🏆', rarity: 'Legendary', unlockRule: { type: 'challenges_completed', threshold: 5, description: 'Complete 5 challenges' }, createdBy: adminUser._id },
     ]);
 
     // 6. Create Rewards
     console.log('Seeding Rewards...');
     await Reward.create([
-      { name: 'Eco Coffee Mug', description: 'Reusable bamboo coffee mug with EcoSphere logo', pointsRequired: 200, stock: 50, category: 'Product', status: 'Active' },
-      { name: 'Rs. 500 Amazon Gift Voucher', description: 'Digital Amazon voucher for sustainable products', pointsRequired: 500, stock: 20, category: 'Voucher', status: 'Active' },
-      { name: 'Plant a Tree', description: 'EcoSphere will plant a tree in your name with a certificate', pointsRequired: 300, stock: 100, category: 'Recognition', status: 'Active' },
-      { name: 'Additional Half-Day Off', description: 'One half-day paid leave certificate', pointsRequired: 1000, stock: 5, category: 'Time Off', status: 'Active' },
+      { name: 'Eco Coffee Mug', description: 'Reusable bamboo coffee mug with EcoSphere logo', pointsRequired: 200, stock: 50, category: 'Product', status: 'Active', createdBy: adminUser._id },
+      { name: 'Rs. 500 Amazon Gift Voucher', description: 'Digital Amazon voucher for sustainable products', pointsRequired: 500, stock: 20, category: 'Voucher', status: 'Active', createdBy: adminUser._id },
+      { name: 'Plant a Tree', description: 'EcoSphere will plant a tree in your name with a certificate', pointsRequired: 300, stock: 100, category: 'Recognition', status: 'Active', createdBy: adminUser._id },
+      { name: 'Additional Half-Day Off', description: 'One half-day paid leave certificate', pointsRequired: 1000, stock: 5, category: 'Time Off', status: 'Active', createdBy: adminUser._id },
     ]);
 
     // 7. Create Challenges
     console.log('Seeding Challenges...');
     await Challenge.create([
-      { title: 'Zero Waste Week', description: 'Minimize single-use plastic waste for one full week at work.', difficulty: 'Medium', category: categories[2]._id, targetDepartment: engDept._id, xpReward: 150, pointsReward: 100, maxParticipants: 30, status: 'Active' },
-      { title: 'Carpool & Cycle', description: 'Commute to work by cycling, walking, or carpooling with colleagues.', difficulty: 'Easy', category: categories[1]._id, xpReward: 100, pointsReward: 50, maxParticipants: 50, status: 'Active' },
-      { title: 'Digital Clean-up', description: 'Clean up old files, emails, and cloud storage to reduce data center power.', difficulty: 'Easy', category: categories[0]._id, xpReward: 80, pointsReward: 30, maxParticipants: 100, status: 'Active' },
+      { title: 'Zero Waste Week', description: 'Minimize single-use plastic waste for one full week at work.', difficulty: 'Medium', category: categories[2]._id, targetDepartment: engDept._id, xpReward: 150, pointsReward: 100, maxParticipants: 30, status: 'Active', deadline: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), createdBy: adminUser._id },
+      { title: 'Carpool & Cycle', description: 'Commute to work by cycling, walking, or carpooling with colleagues.', difficulty: 'Easy', category: categories[1]._id, xpReward: 100, pointsReward: 50, maxParticipants: 50, status: 'Active', deadline: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), createdBy: adminUser._id },
+      { title: 'Digital Clean-up', description: 'Clean up old files, emails, and cloud storage to reduce data center power.', difficulty: 'Easy', category: categories[0]._id, xpReward: 80, pointsReward: 30, maxParticipants: 100, status: 'Active', deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), createdBy: adminUser._id },
     ]);
 
     // 8. Create CSR Activities
     console.log('Seeding CSR Activities...');
     await CSRActivity.create([
-      { title: 'Beach Cleanup Drive', description: 'Help clean up local beach and sort plastics for recycling.', date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), location: 'Marine Drive Beach', pointsAwarded: 120, maxParticipants: 20, status: 'Open', category: categories[3]._id },
-      { title: 'Blood Donation Camp', description: 'Annual community health and blood donation drive.', date: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), location: 'Main Office Cafeteria', pointsAwarded: 100, maxParticipants: 40, status: 'Open', category: categories[4]._id },
+      { title: 'Beach Cleanup Drive', description: 'Help clean up local beach and sort plastics for recycling.', date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), location: 'Marine Drive Beach', pointsAwarded: 120, maxParticipants: 20, status: 'Open', category: categories[3]._id, organizer: adminUser._id },
+      { title: 'Blood Donation Camp', description: 'Annual community health and blood donation drive.', date: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), location: 'Main Office Cafeteria', pointsAwarded: 100, maxParticipants: 40, status: 'Open', category: categories[4]._id, organizer: adminUser._id },
     ]);
 
     // 9. Environmental Goals
     console.log('Seeding Goals...');
     await EnvironmentalGoal.create([
-      { title: 'Reduce Energy Consumption by 10%', description: 'Decrease monthly electricity usage across Engineering department.', department: engDept._id, targetValue: 5000, unit: 'kWh', status: 'On Track', category: categories[0]._id },
-      { title: 'Volunteering hours target', description: 'Aim for 100 hours of community engagement.', department: hrDept._id, targetValue: 100, unit: 'hours', status: 'Active', category: categories[3]._id },
+      { name: 'Reduce Energy Consumption by 10%', description: 'Decrease monthly electricity usage across Engineering department.', department: engDept._id, targetCO2: 5000, currentCO2: 1500, deadline: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), status: 'On Track', createdBy: adminUser._id },
+      { name: 'Commute emission reduction target', description: 'Aim to reduce overall commuting footprint.', department: hrDept._id, targetCO2: 2000, currentCO2: 500, deadline: new Date(Date.now() + 180 * 24 * 60 * 60 * 1000), status: 'Active', createdBy: adminUser._id },
     ]);
 
     console.log('Seeding completed successfully!');
