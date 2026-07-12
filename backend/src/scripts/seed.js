@@ -244,9 +244,9 @@ const seedData = async () => {
     // 15. Seed Compliance Issues
     console.log('Seeding Compliance Issues...');
     await ComplianceIssue.create([
-      { title: 'Improper e-waste recycling in IT department', description: 'Found old monitors and batteries discarded in standard municipal waste bins.', category: 'Environmental', severity: 'High', status: 'Open', assignee: employees[1]._id, dueDate: getPastDate(-1, 30) },
-      { title: 'Missing Conflict Minerals vendor certificates', description: 'Purchasing division failed to acquire compliance declarations from two microchip manufacturers.', category: 'Governance', severity: 'Medium', status: 'In Progress', assignee: employees[2]._id, dueDate: getPastDate(0, 25) },
-      { title: 'Warehouse emergency exit path obstruction', description: 'Pallets of paper blocks blocking main evacuation corridor near loading bay.', category: 'Social', severity: 'High', status: 'Resolved', assignee: employees[3]._id, dueDate: getPastDate(1, 5), resolutionNotes: 'Pallets relocated to secondary rack storage. Verified clearance pathway.' },
+      { title: 'Improper e-waste recycling in IT department', description: 'Found old monitors and batteries discarded in standard municipal waste bins.', department: engDept._id, severity: 'High', status: 'Open', owner: employees[1]._id, dueDate: getPastDate(-1, 30) },
+      { title: 'Missing Conflict Minerals vendor certificates', description: 'Purchasing division failed to acquire compliance declarations from two microchip manufacturers.', department: salesDept._id, severity: 'Medium', status: 'In Progress', owner: employees[2]._id, dueDate: getPastDate(0, 25) },
+      { title: 'Warehouse emergency exit path obstruction', description: 'Pallets of paper blocks blocking main evacuation corridor near loading bay.', department: opsDept._id, severity: 'High', status: 'Resolved', owner: employees[3]._id, dueDate: getPastDate(1, 5), resolution: 'Pallets relocated to secondary rack storage. Verified clearance pathway.' },
     ]);
 
     // 16. Seed Department Scores
