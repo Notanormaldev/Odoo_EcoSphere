@@ -15,7 +15,6 @@
     "@langchain/google-genai": "^0.2.8",
     "axios": "^1.7.9",
     "bcryptjs": "^2.4.3",
-    "bull": "^4.16.5",
     "bullmq": "^5.47.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
