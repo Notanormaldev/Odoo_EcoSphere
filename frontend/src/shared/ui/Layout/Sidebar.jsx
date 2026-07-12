@@ -3,35 +3,47 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import useAuthStore from '@app/store/authStore';
 import api from '@shared/api/client';
 import toast from 'react-hot-toast';
+import {
+  LayoutDashboard,
+  MessageSquare,
+  Leaf,
+  Users,
+  ShieldCheck,
+  Target,
+  BarChart3,
+  Settings,
+  User as UserIcon,
+  Globe
+} from 'lucide-react';
 
 const navSections = [
   {
     label: 'Overview',
     items: [
-      { to: '/dashboard',     icon: '◎',  label: 'Dashboard' },
-      { to: '/chatbot',       icon: '💬', label: 'EcoBot AI' },
+      { to: '/dashboard',     icon: LayoutDashboard,  label: 'Dashboard' },
+      { to: '/chatbot',       icon: MessageSquare, label: 'EcoBot AI' },
     ],
   },
   {
     label: 'ESG Modules',
     items: [
-      { to: '/environmental', icon: '🌿', label: 'Environmental' },
-      { to: '/social',        icon: '🤝', label: 'Social' },
-      { to: '/governance',    icon: '🏛️', label: 'Governance' },
-      { to: '/gamification',  icon: '🎯', label: 'Gamification' },
+      { to: '/environmental', icon: Leaf, label: 'Environmental' },
+      { to: '/social',        icon: Users, label: 'Social' },
+      { to: '/governance',    icon: ShieldCheck, label: 'Governance' },
+      { to: '/gamification',  icon: Target, label: 'Gamification' },
     ],
   },
   {
     label: 'Analytics',
     items: [
-      { to: '/reports',       icon: '📊', label: 'Reports' },
+      { to: '/reports',       icon: BarChart3, label: 'Reports' },
     ],
   },
   {
     label: 'Administration',
     items: [
-      { to: '/settings',      icon: '⚙️', label: 'Settings' },
-      { to: '/profile',       icon: '👤', label: 'My Profile' },
+      { to: '/settings',      icon: Settings, label: 'Settings' },
+      { to: '/profile',       icon: UserIcon, label: 'My Profile' },
     ],
   },
 ];
@@ -53,7 +65,9 @@ export default function Sidebar({ collapsed, mobileOpen, onClose }) {
     <aside className={`app-sidebar ${collapsed ? 'collapsed' : ''} ${mobileOpen ? 'mobile-open' : ''}`}>
       {/* Logo */}
       <div className="sidebar-logo">
-        <div className="sidebar-logo-icon">🌍</div>
+        <div className="sidebar-logo-icon">
+          <Globe size={22} style={{ color: 'var(--color-forest-light)' }} />
+        </div>
         {!collapsed && (
           <span className="sidebar-logo-text">
             Eco<span>Sphere</span>
@@ -78,7 +92,9 @@ export default function Sidebar({ collapsed, mobileOpen, onClose }) {
                 onClick={onClose}
                 title={collapsed ? item.label : undefined}
               >
-                <span className="sidebar-item-icon">{item.icon}</span>
+                <span className="sidebar-item-icon">
+                  <item.icon size={18} strokeWidth={2} />
+                </span>
                 {!collapsed && (
                   <span className="sidebar-item-text">{item.label}</span>
                 )}
