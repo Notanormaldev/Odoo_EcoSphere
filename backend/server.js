@@ -3,7 +3,6 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import passport from 'passport';
-import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -13,6 +12,7 @@ import { connectDB } from './src/config/database.js';
 import { connectRedis } from './src/config/redis.js';
 import { configurePassport } from './src/config/passport.js';
 import { errorHandler, notFound } from './src/middleware/errorHandler.js';
+import { createLimiter } from './src/middleware/rateLimiter.js';
 
 // Routes
 import authRoutes from './src/routes/authRoutes.js';
@@ -48,19 +48,8 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // ─── Rate Limiting ───────────────────────────────────────────────────────────
-const globalLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 500,
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: { success: false, message: 'Too many requests, please try again later.' },
-});
-
-const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 20,
-  message: { success: false, message: 'Too many auth attempts. Please wait 15 minutes.' },
-});
+const globalLimiter = createLimiter(500, 15);
+const authLimiter = createLimiter(20, 15);
 
 app.use('/api/', globalLimiter);
 app.use('/api/auth/login', authLimiter);
