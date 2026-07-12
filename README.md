@@ -11,7 +11,7 @@
 
 ### 🌍 the planet filed a support ticket. we shipped the fix.
 
-**an ESG platform that turns "we care about sustainability" from a LinkedIn caption into an actual audit trail**
+**An ESG platform that replaces sustainability buzzwords with sustainability proof.**
 
 [![Live Demo](https://img.shields.io/badge/🚀_LIVE-odoo--ecosphere.onrender.com-1a7f37?style=for-the-badge)](https://odoo-ecosphere.onrender.com/)
 [![Repo](https://img.shields.io/badge/📦_SOURCE-GitHub-181717?style=for-the-badge&logo=github)](https://github.com/Notanormaldev/Odoo_EcoSphere)
