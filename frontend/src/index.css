@@ -1036,37 +1036,166 @@ h6 { font-size: var(--text-sm); font-weight: var(--fw-medium); }
 ::-webkit-scrollbar-thumb { background: var(--color-stone-300); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--color-stone-400); }
 
-/* ─── Responsive ────────────────────────────────────────────── */
+/* ─── Mobile Overlay ─────────────────────────────────────────── */
+.mobile-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 99;
+  backdrop-filter: blur(2px);
+  animation: fadeIn var(--transition-fast);
+}
+
+/* ─── Responsive Layout Controls ─────────────────────────────── */
+/* Desktop: show toggle, hide hamburger */
+.mobile-menu-btn    { display: none !important; }
+.desktop-sidebar-toggle { display: inline-flex; }
+
+/* ─── Responsive Grid Helpers ────────────────────────────────── */
+.grid-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+.grid-chart-pie {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--space-4);
+}
+
+.grid-auto {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-4);
+}
+
+/* ─── Responsive – Tablet (≤1024px) ─────────────────────────── */
+@media (max-width: 1024px) {
+  :root {
+    --sidebar-width: 210px;
+  }
+
+  .grid-chart-pie {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ─── Responsive – Mobile (≤768px) ──────────────────────────── */
 @media (max-width: 768px) {
+  /* Sidebar becomes a slide-in drawer */
   .app-sidebar {
     transform: translateX(-100%);
-    transition: transform var(--transition);
+    transition: transform var(--transition), width var(--transition);
+    z-index: 100;
+    width: var(--sidebar-width) !important; /* Always full width when open */
   }
 
   .app-sidebar.mobile-open {
     transform: translateX(0);
   }
 
+  /* Main content takes full width */
   .app-main {
     margin-left: 0 !important;
   }
 
+  /* Header adjustments */
+  .mobile-menu-btn         { display: inline-flex !important; }
+  .desktop-sidebar-toggle  { display: none !important; }
+  .header-user-info        { display: none !important; }
+
+  /* KPI grid: 2 columns on mobile */
   .kpi-grid {
     grid-template-columns: 1fr 1fr;
   }
 
+  /* Page header stacks vertically */
   .page-header {
     flex-direction: column;
+    align-items: flex-start;
   }
+
+  .page-actions {
+    width: 100%;
+  }
+
+  /* Dashboard charts: single column */
+  .grid-chart-pie,
+  .grid-2col {
+    grid-template-columns: 1fr;
+  }
+
+  /* Tables: allow horizontal scroll */
+  .table-container {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Modals: full-width on mobile */
+  .modal {
+    max-width: 100%;
+    margin: 0;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    max-height: 92vh;
+  }
+
+  .modal-overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  /* Chat */
+  .chat-container {
+    height: calc(100vh - var(--header-height) - 2rem);
+  }
+
+  .chat-message {
+    max-width: 92%;
+  }
+
+  /* Tabs: scrollable */
+  .tabs {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
 }
 
+/* ─── Responsive – Small phones (≤480px) ────────────────────── */
 @media (max-width: 480px) {
   .app-content {
-    padding: var(--space-4);
+    padding: var(--space-3);
   }
 
+  /* KPI grid: single column on tiny screens */
   .kpi-grid {
     grid-template-columns: 1fr;
+  }
+
+  /* Buttons in page actions wrap */
+  .page-actions {
+    flex-wrap: wrap;
+  }
+
+  /* Page title smaller */
+  .page-title {
+    font-size: var(--text-xl);
+  }
+
+  /* Modal form grids become single column */
+  .modal .form-grid-2 {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* KPI card value slightly smaller */
+  .kpi-card-value {
+    font-size: var(--text-2xl);
+  }
+
+  /* Card padding reduced */
+  .card {
+    padding: var(--space-4);
   }
 }
 

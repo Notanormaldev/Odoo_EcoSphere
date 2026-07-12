@@ -108,7 +108,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Charts row */}
-      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 16, marginBottom: 24 }}>
+      <div className="grid-chart-pie" style={{ marginBottom: 24 }}>
         {/* Monthly emissions */}
         <div className="card">
           <div className="card-header">
@@ -173,7 +173,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Department rankings */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+      <div className="grid-2col">
         <div className="card">
           <div className="card-header">
             <div className="card-title">Department ESG Rankings</div>

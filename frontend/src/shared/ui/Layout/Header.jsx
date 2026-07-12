@@ -37,15 +37,18 @@ export default function Header({ onToggleSidebar, onMobileMenuOpen }) {
 
   return (
     <header className="app-header">
-      {/* Hamburger (mobile) */}
-      <button className="btn btn-ghost btn-icon" onClick={onMobileMenuOpen}
-        style={{ display: 'none' }} aria-label="Open sidebar">
+      {/* Hamburger (mobile only) */}
+      <button
+        className="btn btn-ghost btn-icon mobile-menu-btn"
+        onClick={onMobileMenuOpen}
+        aria-label="Open sidebar"
+      >
         ☰
       </button>
 
-      {/* Toggle sidebar collapse */}
+      {/* Toggle sidebar collapse (desktop only) */}
       <button
-        className="btn btn-ghost btn-icon"
+        className="btn btn-ghost btn-icon desktop-sidebar-toggle"
         onClick={onToggleSidebar}
         aria-label="Toggle sidebar"
         style={{ color: 'var(--color-stone-500)' }}
@@ -76,7 +79,7 @@ export default function Header({ onToggleSidebar, onMobileMenuOpen }) {
             <div
               style={{
                 position: 'absolute', top: 'calc(100% + 8px)', right: 0,
-                width: 360, background: '#fff', border: 'var(--border)',
+                width: 'min(360px, calc(100vw - 32px))', background: '#fff', border: 'var(--border)',
                 borderRadius: 'var(--radius-lg)', boxShadow: 'var(--shadow-lg)',
                 zIndex: 200, overflow: 'hidden',
               }}
@@ -152,10 +155,11 @@ export default function Header({ onToggleSidebar, onMobileMenuOpen }) {
             border: '2px solid var(--color-forest)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             color: 'var(--color-forest)', fontWeight: 700, fontSize: 13,
+            flexShrink: 0,
           }}>
             {user?.name?.[0]?.toUpperCase() || 'U'}
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <div className="header-user-info" style={{ display: 'flex', flexDirection: 'column' }}>
             <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--color-stone-800)', lineHeight: 1.2 }}>
               {user?.name?.split(' ')[0] || 'User'}
             </span>

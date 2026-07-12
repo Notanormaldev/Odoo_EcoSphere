@@ -4,6 +4,7 @@ import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import api from '@shared/api/client';
 import useAuthStore from '@app/store/authStore';
+import Logo from '@shared/ui/Logo';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -61,14 +62,8 @@ export default function LoginPage() {
         }} />
 
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 48 }}>
-            <div style={{
-              width: 40, height: 40, background: 'rgba(255,255,255,0.15)',
-              borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20,
-            }}>🌍</div>
-            <div style={{ color: '#fff', fontSize: 20, fontWeight: 600 }}>
-              Eco<span style={{ color: '#8ABF5C' }}>Sphere</span>
-            </div>
+          <div style={{ marginBottom: 48 }}>
+            <Logo size={36} withText={true} variant="light" />
           </div>
 
           <h1 style={{

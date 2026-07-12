@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import api from '@shared/api/client';
+import Logo from '@shared/ui/Logo';
 
 export default function RegisterPage() {
   const navigate = useNavigate();
@@ -46,14 +47,8 @@ export default function RegisterPage() {
     }}>
       <div style={{ width: '100%', maxWidth: 440 }}>
         {/* Logo */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 32 }}>
-          <div style={{
-            width: 36, height: 36, background: 'var(--color-forest)',
-            borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18,
-          }}>🌍</div>
-          <span style={{ fontSize: 18, fontWeight: 600, color: 'var(--color-stone-900)' }}>
-            Eco<span style={{ color: 'var(--color-forest)' }}>Sphere</span>
-          </span>
+        <div style={{ marginBottom: 32 }}>
+          <Logo size={32} withText={true} variant="dark" />
         </div>
 
         <div className="card">

@@ -58,21 +58,59 @@ export const verifyEmail = async (req, res, next) => {
   try {
     const { token } = req.params;
 
-    const user = await User.findOne({
-      emailVerificationToken: token,
-      emailVerificationExpires: { $gt: Date.now() },
-    }).select('+emailVerificationToken +emailVerificationExpires');
-
-    if (!user) {
-      throw new AppError('Invalid or expired verification token', 400);
+    if (!token) {
+      throw new AppError('Verification token is required', 400);
     }
 
-    user.isEmailVerified = true;
-    user.emailVerificationToken = undefined;
-    user.emailVerificationExpires = undefined;
-    await user.save();
+    // First check if a user has this token (regardless of expiry)
+    const userWithToken = await User.findOne({
+      emailVerificationToken: token,
+    }).select('+emailVerificationToken +emailVerificationExpires');
 
-    const { accessToken, refreshToken } = generateTokens(user._id);
+    if (!userWithToken) {
+      // Maybe token was already used (user is verified) — check by token value not expiry
+      throw new AppError(
+        'This verification link is invalid or has already been used. Please request a new one.',
+        400
+      );
+    }
+
+    // Check if already verified
+    if (userWithToken.isEmailVerified) {
+      // Already verified — just generate tokens and let them in
+      const { accessToken, refreshToken } = generateTokens(userWithToken._id);
+      return res.status(200).json({
+        success: true,
+        message: 'Email already verified',
+        data: {
+          accessToken,
+          refreshToken,
+          user: {
+            id: userWithToken._id,
+            name: userWithToken.name,
+            email: userWithToken.email,
+            role: userWithToken.role,
+            isEmailVerified: true,
+          },
+        },
+      });
+    }
+
+    // Check expiry
+    if (userWithToken.emailVerificationExpires < Date.now()) {
+      throw new AppError(
+        'This verification link has expired (valid for 24 hours). Please request a new one below.',
+        400
+      );
+    }
+
+    // All good — verify the user
+    userWithToken.isEmailVerified = true;
+    userWithToken.emailVerificationToken = undefined;
+    userWithToken.emailVerificationExpires = undefined;
+    await userWithToken.save();
+
+    const { accessToken, refreshToken } = generateTokens(userWithToken._id);
 
     res.status(200).json({
       success: true,
@@ -81,10 +119,10 @@ export const verifyEmail = async (req, res, next) => {
         accessToken,
         refreshToken,
         user: {
-          id: user._id,
-          name: user.name,
-          email: user.email,
-          role: user.role,
+          id: userWithToken._id,
+          name: userWithToken.name,
+          email: userWithToken.email,
+          role: userWithToken.role,
           isEmailVerified: true,
         },
       },

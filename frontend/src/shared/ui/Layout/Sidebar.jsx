@@ -3,6 +3,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import useAuthStore from '@app/store/authStore';
 import api from '@shared/api/client';
 import toast from 'react-hot-toast';
+import Logo from '@shared/ui/Logo';
 import {
   LayoutDashboard,
   MessageSquare,
@@ -13,7 +14,6 @@ import {
   BarChart3,
   Settings,
   User as UserIcon,
-  Globe
 } from 'lucide-react';
 
 const navSections = [
@@ -65,13 +65,10 @@ export default function Sidebar({ collapsed, mobileOpen, onClose }) {
     <aside className={`app-sidebar ${collapsed ? 'collapsed' : ''} ${mobileOpen ? 'mobile-open' : ''}`}>
       {/* Logo */}
       <div className="sidebar-logo">
-        <div className="sidebar-logo-icon">
-          <Globe size={22} style={{ color: 'var(--color-forest-light)' }} />
-        </div>
-        {!collapsed && (
-          <span className="sidebar-logo-text">
-            Eco<span>Sphere</span>
-          </span>
+        {collapsed ? (
+          <Logo size={28} withText={false} variant="light" />
+        ) : (
+          <Logo size={28} withText={true} variant="light" />
         )}
       </div>
 
