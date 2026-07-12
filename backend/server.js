@@ -93,11 +93,14 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Serve React production build static files
-if (config.nodeEnv === 'production') {
-  app.use(express.static(path.join(__dirname, '../frontend/dist')));
+import fs from 'fs';
+
+// Serve React production build static files if built
+const distPath = path.join(__dirname, '../frontend/dist');
+if (fs.existsSync(distPath)) {
+  app.use(express.static(distPath));
   app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
+    res.sendFile(path.join(distPath, 'index.html'));
   });
 }
 
