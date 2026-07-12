@@ -6,6 +6,8 @@ import {
 } from 'recharts';
 import api from '@shared/api/client';
 import useAuthStore from '@app/store/authStore';
+import { formatNumber, formatCO2 } from '@shared/utils/number';
+import { formatDate } from '@shared/utils/date';
 
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const SCORE_COLORS = { Environmental: '#2D5016', Social: '#B45309', Governance: '#1D4ED8' };
@@ -87,19 +89,18 @@ export default function DashboardPage() {
       <div className="kpi-grid" style={{ marginBottom: 24 }}>
         <KPICard
           label="Total CO₂ Emissions"
-          value={summary?.kpi?.totalCO2e ? (summary.kpi.totalCO2e / 1000).toFixed(1) : '—'}
-          unit="tonnes"
+          value={summary?.kpi?.totalCO2e ? formatCO2(summary.kpi.totalCO2e) : '—'}
           icon="🌿"
         />
-        <KPICard label="Active Goals"      value={summary?.kpi?.activeGoals}       icon="🎯" />
-        <KPICard label="CSR Participations" value={summary?.kpi?.csrParticipations} icon="🤝" />
-        <KPICard label="Challenges Completed" value={summary?.kpi?.challengeCompletions} icon="🏆" />
+        <KPICard label="Active Goals"      value={formatNumber(summary?.kpi?.activeGoals)}       icon="🎯" />
+        <KPICard label="CSR Participations" value={formatNumber(summary?.kpi?.csrParticipations)} icon="🤝" />
+        <KPICard label="Challenges Completed" value={formatNumber(summary?.kpi?.challengeCompletions)} icon="🏆" />
         <KPICard
           label="Open Issues"
-          value={summary?.kpi?.openComplianceIssues}
+          value={formatNumber(summary?.kpi?.openComplianceIssues)}
           icon="⚠️"
         />
-        <KPICard label="Active Employees" value={summary?.kpi?.activeEmployees} icon="👥" />
+        <KPICard label="Active Employees" value={formatNumber(summary?.kpi?.activeEmployees)} icon="👥" />
       </div>
 
       {/* Charts row */}
