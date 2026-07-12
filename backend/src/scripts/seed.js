@@ -218,9 +218,9 @@ const seedData = async () => {
     // 12. Seed ESG Policies
     console.log('Seeding ESG Policies...');
     const policies = await ESGPolicy.create([
-      { title: 'Supplier Code of Conduct', description: 'Mandates sustainable practices, fair labor, and ethical governance standards for all company suppliers and vendors.', category: 'Governance', status: 'Published', version: 'v1.2', fileUrl: 'https://ik.imagekit.io/ecosphere/supplier_code.pdf', createdBy: adminUser._id },
-      { title: 'Sustainable Office Commuting', description: 'Policy supporting hybrid schedules, public transit stipends, and bicycle facilities to reduce Scope 3 employee commuting emissions.', category: 'Environmental', status: 'Published', version: 'v2.0', fileUrl: 'https://ik.imagekit.io/ecosphere/commute_policy.pdf', createdBy: adminUser._id },
-      { title: 'Equal Opportunity and Diversity Policy', description: 'Sets frameworks for anti-harassment, pay parity reviews, and transparent hiring metrics across all branches.', category: 'Social', status: 'Published', version: 'v1.0', fileUrl: 'https://ik.imagekit.io/ecosphere/diversity_policy.pdf', createdBy: adminUser._id },
+      { title: 'Supplier Code of Conduct', description: 'Mandates sustainable practices, fair labor, and ethical governance standards.', content: 'All suppliers must adhere to waste minimization, fair wage principles, and transparency in supply tracking.', category: 'Governance', status: 'Active', version: 'v1.2', effectiveDate: getPastDate(2, 1), documentUrl: 'https://ik.imagekit.io/ecosphere/supplier_code.pdf', createdBy: adminUser._id },
+      { title: 'Sustainable Office Commuting', description: 'Policy supporting hybrid schedules, public transit stipends, and bicycle facilities.', content: 'Employees are encouraged to walk, bike, carpool, or use public transit. Transit passes are subsidized up to 50%.', category: 'Environmental', status: 'Active', version: 'v2.0', effectiveDate: getPastDate(1, 15), documentUrl: 'https://ik.imagekit.io/ecosphere/commute_policy.pdf', createdBy: adminUser._id },
+      { title: 'Equal Opportunity and Diversity Policy', description: 'Sets frameworks for anti-harassment and hiring metrics across all branches.', content: 'EcoSphere mandates equal pay review cycles annually and publishes diversity representation audits.', category: 'Social', status: 'Active', version: 'v1.0', effectiveDate: getPastDate(3, 1), documentUrl: 'https://ik.imagekit.io/ecosphere/diversity_policy.pdf', createdBy: adminUser._id },
     ]);
 
     // 13. Policy Acknowledgements
