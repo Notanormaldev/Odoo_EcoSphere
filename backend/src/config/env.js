@@ -22,7 +22,7 @@ export const config = {
     urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT,
   },
   geminiApiKey: process.env.GOOGLE_GEMINI_API,
-  nodeEnv: process.env.NODE_ENVIRONMENT || 'development',
+  nodeEnv: process.env.NODE_ENVIRONMENT || process.env.NODE_ENV || 'development',
   port: parseInt(process.env.PORT, 10) || 5000,
   clientUrl: process.env.CLIENT_URL || 'http://localhost:5173',
   sessionSecret: process.env.SESSION_SECRET || 'ecosphere_secret',

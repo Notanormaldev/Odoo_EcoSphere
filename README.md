@@ -1,174 +1,114 @@
-# EcoSphere ESG Management Platform
+# <img src="screenshots/logo.png" alt="EcoSphere Logo" width="36" align="center" style="margin-right: 8px;" /> EcoSphere ESG Management Platform
 
-EcoSphere is a full-stack ESG management platform for organizations that want to measure, monitor, and improve environmental, social, and governance performance from one place. The system combines operational data, employee engagement, compliance workflows, and AI-assisted guidance into a unified experience.
+EcoSphere is a full-stack **ESG (Environmental, Social, and Governance) Management Platform** designed for organizations to measure, monitor, and improve their sustainability performance. The system integrates operational carbon accounting, social engagement workflows, compliance audits, policy acknowledgements, gamified engagement, and AI-assisted ESG advisory into a unified dashboard.
 
-## What the platform provides
+---
 
-- Environmental tracking for carbon transactions, emission factors, sustainability goals, and department-level reporting.
-- Social engagement features for CSR activities, employee participation, and community-focused initiatives.
-- Governance workflows for ESG policies, acknowledgements, audits, and compliance issue management.
-- Gamification features such as challenges, XP, badges, rewards, and leaderboards.
-- An AI assistant, EcoBot, powered by Google Gemini for ESG-related questions and advisory support.
+## 📸 Platform Interface Showcase
 
-## Core modules
+### 🖥️ Desktop Interface
+| Dashboard | Environmental Module |
+|---|---|
+| <img src="screenshots/dashboard_desktop.png" alt="EcoSphere Desktop Dashboard" width="400" /> | <img src="screenshots/environmental_desktop.png" alt="Environmental Carbon Tracking" width="400" /> |
 
-- Environmental
-  - Scope 1, 2, and 3 emissions tracking
-  - Carbon transaction management
-  - Goal tracking and sustainability targets
-  - Department and organizational reporting
+| Reports & Analytics |
+|---|
+| <img src="screenshots/reports_desktop.png" alt="Reports & Analytics Dashboard" width="820" /> |
 
-- Social
-  - CSR activity management
-  - Employee participation workflows
-  - Community-oriented engagement tracking
+### 📱 Mobile Responsiveness
+| Mobile Dashboard | Mobile Governance |
+|---|---|
+| <img src="screenshots/dashboard_mobile.png" alt="Mobile Dashboard View" width="260" /> | <img src="screenshots/governance_mobile.png" alt="Mobile Governance Policies" width="260" /> |
 
-- Governance
-  - Policy publishing and acknowledgement
-  - Audit and compliance issue tracking
-  - Governance oversight and reporting
+---
 
-- Gamification
-  - Challenges and participation flows
-  - XP, badges, and rewards
-  - Leaderboards and engagement metrics
+## ✨ Features & Capabilities
 
-## Architecture overview
+### 🌿 1. Environmental Module
+- **Carbon Transactions**: Log emissions under Scope 1 (Direct), Scope 2 (Indirect), and Scope 3 (Value Chain).
+- **Goal Management**: Set targets (e.g., target carbon reduction), monitor progress, and classify status (On Track, At Risk).
+- **Emissions Factor Engine**: Automatic calculation of CO₂e metrics depending on source type (Electricity, Fuel, Travel, Waste).
 
-EcoSphere is built as a modern three-layer application:
+### 🤝 2. Social Module
+- **CSR Activities**: Design volunteer events (e.g. Beach Cleanups, Blood Donation Drives) where employees can join.
+- **Participation Workflows**: Verification queue for managers to approve activity completion.
+- **Diversity Analytics**: Monitor gender and department employee distribution.
 
-- Frontend: React + Vite + React Router + TanStack Query + Zustand
-- Backend: Node.js + Express + MongoDB + Mongoose + Redis
-- Integrations: Google Gemini, Google OAuth, Brevo email, ImageKit file storage, and BullMQ-based background processing
+### 🏛️ 3. Governance Module
+- **ESG Policies**: Create, publish, and track employee policy acknowledgements.
+- **Audits & Issues**: Create internal compliance reviews and log open issues with severity and remediation status.
+- **Audit Trails**: Non-repudiation logging for all compliance actions.
 
-## Project structure
+### 🏆 4. Gamification Engine
+- **Challenges**: Time-bound challenges with XP and Points rewards.
+- **Badges**: Milestones badges (e.g., Carbon Champion, CSR Hero) unlocked automatically.
+- **Leaderboards**: Department-wise and individual leaderboards to motivate active participation.
 
-- root: development runner and high-level project docs
-- backend: Express API, database models, routes, services, seed scripts, and tests
-- frontend: React application with pages, routing, and UI state management
+### 💬 5. EcoBot AI Assistant
+- Embedded **Gemini AI chatbot** using LangChain.
+- Answers questions about ESG frameworks (GRI, SASB, TCFD, UN SDGs).
+- **Instant Fallback Engine**: If Gemini is offline or rate-limited, the system falls back to a local ESG database in under 200ms without throwing errors.
 
-## Tech stack
+---
+
+## 🛠️ Architecture & Tech Stack
 
 ### Backend
-- Node.js
-- Express.js
-- MongoDB with Mongoose
-- Redis
-- JWT authentication and Passport.js
-- Google Gemini API
-- Brevo SMTP
-- ImageKit upload integration
-- Jest for testing
+- **Node.js & Express.js**: REST API server.
+- **MongoDB & Mongoose**: Object Data Modeling.
+- **Redis Cache**: Session blacklist validation and caching.
+- **Passport.js**: Authentication handling.
+- **LangChain / Google GenAI**: Powered by `gemini-2.0-flash`.
+- **Nodemailer**: SMTP transaction emails.
+- **Jest**: Backend test suite.
 
 ### Frontend
-- Vite
-- React
-- React Router
-- TanStack Query
-- Zustand
-- Recharts
-- Lucide icons
-- React Hot Toast
+- **Vite & React**: Single Page Application.
+- **React Router**: Client-side SPA routing.
+- **Zustand**: Clean state management.
+- **TanStack Query (React Query)**: Fetching, caching, and state synchronization.
+- **Recharts**: Responsive SVG graphs and pie charts.
+- **Lucide Icons**: Crisp vector icons.
 
-## Prerequisites
+---
 
-Before running the project locally, make sure you have:
+## 🚀 Quick Start (Local Run)
 
-- Node.js 18+ and npm
-- MongoDB running locally or a MongoDB Atlas connection string
-- Redis running locally or a reachable Redis instance
+### 1. Prerequisites
+Ensure you have installed:
+- Node.js 18+
+- MongoDB (local or Atlas)
+- Redis Server
 
-## Environment configuration
-
-Create a backend environment file by copying the example file:
-
+### 2. Setup Environment Configuration
+Copy the `.env.example` in backend and configure your credentials:
 ```bash
 cp backend/.env.example backend/.env
 ```
+Key configurations include:
+- `MONGO_URI`, `JWT_SECRET`, `GOOGLE_GEMINI_API`, `REDIS_HOST`, `REDIS_PORT`
 
-Then update the values in backend/.env with your own configuration, including:
-
-- MONGO_URI
-- JWT_SECRET and JWT_REFRESH_SECRET
-- GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET
-- BREVO_API_KEY
-- GOOGLE_GEMINI_API
-- REDIS_HOST, REDIS_PORT, and REDIS_PASSWORD
-- IMAGEKIT_PUBLIC_KEY, IMAGEKIT_PRIVATE_KEY, and IMAGEKIT_URL_ENDPOINT
-
-## Installation
-
-Install dependencies for both applications:
-
+### 3. Installation & Database Seeding
+You can install dependencies for both frontend and backend using the root scripts:
 ```bash
-cd backend && npm install
-cd ../frontend && npm install
-```
+# Install all dependencies
+npm run install-all
 
-## Seed demo data
-
-The backend includes a seed script that populates departments, users, policies, challenges, rewards, carbon transactions, and sample ESG data.
-
-```bash
+# Seed initial ESG demo data
 cd backend
 npm run seed
 ```
 
-## Run locally
-
-You can start both apps together from the root:
-
+### 4. Running the App
+Start both frontend and backend development servers concurrently:
 ```bash
+# In repository root
 node dev.js
 ```
+The client runs on [http://localhost:5173](http://localhost:5173) and the backend API on [http://localhost:3000](http://localhost:3000).
 
-Or run them separately:
+---
 
-```bash
-cd backend
-npm run dev
-```
-
-```bash
-cd frontend
-npm run dev
-```
-
-The frontend will typically run on http://localhost:5173 and the backend API on http://localhost:5000.
-
-## Default demo credentials
-
-After running the seed script, you can use:
-
-- Admin: admin@ecosphere.com / password123
-- Employee sample accounts are also created during seeding
-
-## API overview
-
-The backend exposes REST endpoints under these modules:
-
-- /api/auth for authentication and user access
-- /api/users for profile management
-- /api/environmental for emissions and environmental data
-- /api/social for CSR and participation workflows
-- /api/governance for policies, audits, and compliance issues
-- /api/gamification for challenges, badges, rewards, and points
-- /api/reports for reporting and analytics
-- /api/chatbot for EcoBot AI interactions
-- /health for server health checks
-
-## Testing
-
-Run backend tests:
-
-```bash
-cd backend
-npm test
-```
-
-Build the frontend for production:
-
-```bash
-cd frontend
-npm run build
-```
+## 🔐 Demo Credentials
+- **Admin**: `admin@ecosphere.com` / `password123`
+- **Employee**: `dhruvpanchal0312@gmail.com` / `password123`
