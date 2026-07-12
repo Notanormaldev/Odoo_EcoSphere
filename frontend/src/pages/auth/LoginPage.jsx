@@ -20,7 +20,8 @@ export default function LoginPage() {
       navigate('/dashboard');
     },
     onError: (err) => {
-      toast.error(err.response?.data?.message || 'Login failed');
+      const details = err.response?.data?.errors?.[0]?.message;
+      toast.error(details || err.response?.data?.message || 'Login failed');
     },
   });
 
