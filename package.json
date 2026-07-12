@@ -1,6 +1,6 @@
 {
   "name": "ecosphere-fullstack",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "EcoSphere ESG Management Platform - Unified Repository",
   "main": "backend/server.js",
   "type": "module",
