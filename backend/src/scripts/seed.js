@@ -175,45 +175,40 @@ const seedData = async () => {
         // Scope 1: Diesel Generators / Combustions
         mockTransactions.push({
           department: dept._id,
-          activityType: 'Electricity',
+          sourceType: 'Energy',
           scope: 'Scope 1',
-          fuelType: 'Diesel',
           quantity: 200 + Math.floor(Math.random() * 100),
           unit: 'litres',
-          co2e: 500 + Math.floor(Math.random() * 250),
-          loggedBy: employees[1]._id,
+          co2Equivalent: 500 + Math.floor(Math.random() * 250),
+          createdBy: employees[1]._id,
           transactionDate: getPastDate(i, 5),
-          notes: `${dept.name} diesel generator backup fuel`,
-          status: 'Approved',
+          notes: `${dept.name} diesel generator backup fuel (Diesel)`,
         });
 
         // Scope 2: Purchased Electricity
         mockTransactions.push({
           department: dept._id,
-          activityType: 'Electricity',
+          sourceType: 'Energy',
           scope: 'Scope 2',
           quantity: 1200 + Math.floor(Math.random() * 800),
           unit: 'kWh',
-          co2e: 980 + Math.floor(Math.random() * 650),
-          loggedBy: employees[3]._id,
+          co2Equivalent: 980 + Math.floor(Math.random() * 650),
+          createdBy: employees[3]._id,
           transactionDate: getPastDate(i, 15),
           notes: `${dept.name} utility electrical bill`,
-          status: 'Approved',
         });
 
         // Scope 3: Air Travel / Employee Commute
         mockTransactions.push({
           department: dept._id,
-          activityType: 'Travel',
+          sourceType: 'Fleet',
           scope: 'Scope 3',
-          vehicleType: 'Car',
-          distance: 1500 + Math.floor(Math.random() * 1000),
+          quantity: 1500 + Math.floor(Math.random() * 1000),
           unit: 'km',
-          co2e: 270 + Math.floor(Math.random() * 180),
-          loggedBy: employees[0]._id,
+          co2Equivalent: 270 + Math.floor(Math.random() * 180),
+          createdBy: employees[0]._id,
           transactionDate: getPastDate(i, 20),
-          notes: `${dept.name} employee commuting distances`,
-          status: 'Approved',
+          notes: `${dept.name} employee commuting distances (Car)`,
         });
       });
     }
