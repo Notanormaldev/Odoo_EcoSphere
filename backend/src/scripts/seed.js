@@ -236,9 +236,9 @@ const seedData = async () => {
     // 14. Seed Audits
     console.log('Seeding Audits...');
     await Audit.create([
-      { title: 'Q1 Scope 1 & 2 Emissions Audit', scope: 'Environmental', status: 'Completed', startDate: getPastDate(2, 1), endDate: getPastDate(2, 5), leadAuditor: 'Bob Wilson', findings: 2, recommendations: 'Improve Diesel fuel receipt scanning accuracy; install smart electric meters on main floor.' },
-      { title: 'Supply Chain Labor Rights Audit', scope: 'Social', status: 'In Progress', startDate: getPastDate(0, 10), leadAuditor: 'Jane Doe', findings: 0, recommendations: 'Ongoing inspection of supplier assembly facilities.' },
-      { title: 'Anti-Corruption compliance check', scope: 'Governance', status: 'Scheduled', startDate: getPastDate(-1, 15), leadAuditor: 'External Consultant' },
+      { title: 'Q1 Scope 1 & 2 Emissions Audit', department: engDept._id, auditor: employees[3]._id, auditorName: 'Bob Wilson', auditDate: getPastDate(2, 5), scope: 'Environmental', status: 'Completed', findingsCount: 2, findings: 'Improve Diesel fuel receipt scanning accuracy; install smart electric meters on main floor.' },
+      { title: 'Supply Chain Labor Rights Audit', department: hrDept._id, auditor: employees[0]._id, auditorName: 'Jane Doe', auditDate: getPastDate(0, 10), scope: 'Social', status: 'In Progress', findingsCount: 0, findings: 'Ongoing inspection of supplier assembly facilities.' },
+      { title: 'Anti-Corruption compliance check', department: opsDept._id, auditor: adminUser._id, auditorName: 'EcoSphere Admin', auditDate: getPastDate(-1, 15), scope: 'Governance', status: 'Scheduled', findingsCount: 0 },
     ]);
 
     // 15. Seed Compliance Issues
