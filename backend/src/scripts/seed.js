@@ -375,6 +375,15 @@ export const seedData = async (shouldExit = true) => {
       { employee: employees[17]._id, challenge: mockChallenges[3]._id, status: 'Joined' }
     ]);
 
+    // 19. Seed Reward Redemptions for Harsh Patel
+    console.log('Seeding Reward Redemptions...');
+    const harshUser = employees.find(emp => emp.email === 'harsh@ecosphere.com');
+    await RewardRedemption.create([
+      { employee: harshUser._id, reward: rewards[0]._id, pointsSpent: 150, status: 'Fulfilled', redeemedAt: getPastDate(0, 12) },
+      { employee: harshUser._id, reward: rewards[2]._id, pointsSpent: 500, status: 'Fulfilled', redeemedAt: getPastDate(0, 8) },
+      { employee: harshUser._id, reward: rewards[4]._id, pointsSpent: 250, status: 'Pending', redeemedAt: getPastDate(0, 1) },
+    ]);
+
     console.log('Seeding completed successfully!');
     if (shouldExit) process.exit(0);
   } catch (error) {
