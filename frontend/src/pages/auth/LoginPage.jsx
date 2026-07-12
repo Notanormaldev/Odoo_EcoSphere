@@ -196,7 +196,7 @@ export default function LoginPage() {
 
       <style>{`
         @media (max-width: 768px) {
-          .auth-panel-left { display: none; }
+          .auth-panel-left { display: none !important; }
         }
       `}</style>
     </div>

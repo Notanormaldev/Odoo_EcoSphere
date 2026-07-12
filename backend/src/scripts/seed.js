@@ -4,7 +4,7 @@ import Department from '../models/Department.js';
 import Category from '../models/Category.js';
 import EmissionFactor from '../models/EmissionFactor.js';
 import Badge from '../models/Badge.js';
-import Reward from '../models/Reward.js';
+import Reward, { RewardRedemption } from '../models/Reward.js';
 import User from '../models/User.js';
 import ESGConfig from '../models/ESGConfig.js';
 import EnvironmentalGoal from '../models/EnvironmentalGoal.js';
@@ -41,6 +41,7 @@ export const seedData = async (shouldExit = true) => {
       EmissionFactor.deleteMany({}),
       Badge.deleteMany({}),
       Reward.deleteMany({}),
+      RewardRedemption.deleteMany({}),
       ESGConfig.deleteMany({}),
       EnvironmentalGoal.deleteMany({}),
       CSRActivity.deleteMany({}),
@@ -134,7 +135,7 @@ export const seedData = async (shouldExit = true) => {
 
     // 6. Create Rewards
     console.log('Seeding Rewards...');
-    await Reward.create([
+    const rewards = await Reward.create([
       { name: 'Eco Bamboo Travel Mug', description: 'Reusable bamboo coffee mug with EcoSphere logo engraving', pointsRequired: 150, stock: 120, category: 'Product', status: 'Active', createdBy: adminUser._id },
       { name: 'Organic Cotton Canvas Tote', description: 'Strong organic tote bag perfect for zero-waste shopping trips', pointsRequired: 100, stock: 80, category: 'Product', status: 'Active', createdBy: adminUser._id },
       { name: 'Rs. 500 Amazon Gift Voucher', description: 'Digital Amazon voucher for purchasing verified eco-friendly goods', pointsRequired: 500, stock: 45, category: 'Voucher', status: 'Active', createdBy: adminUser._id },
@@ -201,6 +202,20 @@ export const seedData = async (shouldExit = true) => {
       
       // Target Seed Account requested by user:
       { name: 'Dhruv Panchal', email: 'dhruvpanchal0312@gmail.com', password: 'password123', role: 'employee', employeeId: 'EMP001', designation: 'Sustainability Auditor', department: engDept._id, xp: 1550, points: 1200, isEmailVerified: true, bio: 'Sustainability lead auditor at EcoSphere. Dedicated to reducing corporate carbon index.' },
+      { 
+        name: 'Harsh Patel', 
+        email: 'harsh@ecosphere.com', 
+        password: 'password123', 
+        role: 'employee', 
+        employeeId: 'EMP019', 
+        designation: 'Chief ESG Strategist', 
+        department: rndDept._id, 
+        xp: 2850, 
+        points: 1900, 
+        isEmailVerified: true, 
+        bio: 'Chief ESG strategist at EcoSphere, managing corporate sustainability roadmaps and carbon reduction initiatives.',
+        badges: [badges[0]._id, badges[1]._id, badges[2]._id, badges[4]._id]
+      },
     ]);
 
     // 11. Seed Carbon Transactions (Emissions) - Expanded to 12 Months of Data
