@@ -1,21 +1,10 @@
-import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import { config } from '../config/env.js';
 import { blacklistToken, isTokenBlacklisted } from '../config/redis.js';
 import User from '../models/User.js';
 import { sendVerificationEmail, sendPasswordResetEmail } from '../services/emailService.js';
 import { AppError } from '../middleware/errorHandler.js';
-
-// Generate tokens
-const generateTokens = (userId) => {
-  const accessToken = jwt.sign({ id: userId }, config.jwtSecret, {
-    expiresIn: config.jwtExpiresIn,
-  });
-  const refreshToken = jwt.sign({ id: userId }, config.jwtRefreshSecret, {
-    expiresIn: config.jwtRefreshExpiresIn,
-  });
-  return { accessToken, refreshToken };
-};
+import { generateTokens } from '../utils/tokenGenerator.js';
 
 // Register
 export const register = async (req, res, next) => {
