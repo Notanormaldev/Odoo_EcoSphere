@@ -10,7 +10,6 @@ export const connectRedis = () => {
     host: config.redis.host,
     port: config.redis.port,
     password: config.redis.password,
-    tls: {},
     retryStrategy: (times) => {
       const delay = Math.min(times * 50, 2000);
       return delay;
