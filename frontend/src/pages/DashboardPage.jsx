@@ -72,6 +72,43 @@ export default function DashboardPage() {
     { name: 'Governance',    value: +(summary.scores?.avgGov?.toFixed(1) || 0) },
   ] : [];
 
+  const handleExportReport = () => {
+    if (!summary) {
+      toast.error('No report data available to export');
+      return;
+    }
+
+    const csvContent = [
+      ['EcoSphere ESG Performance Report'],
+      ['Generated On', new Date().toLocaleString()],
+      [],
+      ['KPI Metric', 'Value'],
+      ['Total CO2 Emissions', summary.kpi?.totalCO2e ? `${(summary.kpi.totalCO2e / 1000).toFixed(1)} t` : '—'],
+      ['Active Goals', summary.kpi?.activeGoals || 0],
+      ['CSR Participations', summary.kpi?.csrParticipations || 0],
+      ['Challenges Completed', summary.kpi?.challengeCompletions || 0],
+      ['Open Compliance Issues', summary.kpi?.openComplianceIssues || 0],
+      ['Active Employees', summary.kpi?.activeEmployees || 0],
+      [],
+      ['Monthly Carbon Emissions Trend (Last 12 Months)'],
+      ['Month', 'CO2 Equivalent (kg)'],
+      ...(summary.monthlyEmissions || []).map(item => [item.month, item.co2Equivalent])
+    ]
+      .map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+      .join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', `ecosphere_esg_report_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success('ESG Report CSV downloaded successfully');
+  };
+
   const greetingHour = new Date().getHours();
   const greeting = greetingHour < 12 ? 'Good morning' : greetingHour < 17 ? 'Good afternoon' : 'Good evening';
 
@@ -84,7 +121,7 @@ export default function DashboardPage() {
           <p className="page-subtitle">Here's your organization's ESG performance at a glance</p>
         </div>
         <div className="page-actions">
-          <button className="btn btn-secondary btn-sm">Export Report</button>
+          <button className="btn btn-secondary btn-sm" onClick={handleExportReport}>Export Report</button>
           <button className="btn btn-primary btn-sm">+ Log Activity</button>
         </div>
       </div>
