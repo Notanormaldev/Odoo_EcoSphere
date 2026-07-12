@@ -118,11 +118,7 @@ The platform uses a local or cloud Redis instance to manage critical performance
 
 ## 🗄️ Database Seeding & Startup Verification
 
-To ensure zero-config deployments on cloud servers like Render, the startup routine in `server.js` executes an intelligent startup check:
-
-1. **Existence Verification**: Queries Mongoose for the primary accounts `admin@ecosphere.com` and `harsh@ecosphere.com`.
-2. **Dynamic Importing**: If either is missing, it dynamically loads `seed.js` and seeds the database collections with fully hydrated metrics, challenges, and user accounts.
-3. **Data Integrity**: Clears out stale tokens and rebuilds clean compliance records, ensuring the application is immediately ready for demonstrations.
+The database seeding files (`seed.js`) and auto-seeding routines in `server.js` have been removed to keep the codebase clean and avoid unwanted modifications to existing databases. Ensure your database contains the required collections and accounts before launching the application.
 
 ---
 

@@ -47,7 +47,7 @@ export default function RegisterPage() {
     }}>
       <div style={{ width: '100%', maxWidth: 440 }}>
         {/* Logo */}
-        <div style={{ marginBottom: 32 }}>
+        <div className="register-logo-container" style={{ marginBottom: 32 }}>
           <Logo size={32} withText={true} variant="dark" />
         </div>
 
@@ -173,6 +173,24 @@ export default function RegisterPage() {
           By creating an account, you agree to our Terms of Service and Privacy Policy
         </p>
       </div>
+
+      <style>{`
+        @media (max-width: 768px) {
+          .register-logo-container {
+            padding-top: 32px;
+          }
+          .register-logo-container .logo-lockup {
+            gap: 16.8px !important;
+          }
+          .register-logo-container .logo-lockup svg {
+            width: 48px !important;
+            height: 48px !important;
+          }
+          .register-logo-container .logo-lockup span {
+            font-size: 26.4px !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }

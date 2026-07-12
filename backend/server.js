@@ -125,21 +125,6 @@ const startServer = async () => {
     await connectDB();
     connectRedis();
 
-    // Auto-seed database if admin/harsh seed accounts are missing (crucial for cloud deployments)
-    try {
-      const User = (await import('./src/models/User.js')).default;
-      const adminExists = await User.findOne({ email: 'admin@ecosphere.com' });
-      const harshExists = await User.findOne({ email: 'harsh@ecosphere.com' });
-      if (!adminExists || !harshExists) {
-        logger.info('🌱 Seed users missing. Auto-seeding initial ESG data...');
-        const { seedData } = await import('./src/scripts/seed.js');
-        await seedData(false);
-        logger.info('✅ Auto-seeding completed successfully!');
-      }
-    } catch (seedErr) {
-      logger.error('Auto-seeding check failed:', seedErr);
-    }
-
     app.listen(config.port, () => {
       logger.info(`EcoSphere API running on port ${config.port}`);
       logger.info(`Environment: ${config.nodeEnv}`);

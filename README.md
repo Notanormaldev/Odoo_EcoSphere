@@ -88,15 +88,11 @@ cp backend/.env.example backend/.env
 Key configurations include:
 - `MONGO_URI`, `JWT_SECRET`, `GOOGLE_GEMINI_API`, `REDIS_HOST`, `REDIS_PORT`
 
-### 3. Installation & Database Seeding
+### 3. Installation
 You can install dependencies for both frontend and backend using the root scripts:
 ```bash
 # Install all dependencies
 npm run install-all
-
-# Seed initial ESG demo data
-cd backend
-npm run seed
 ```
 
 ### 4. Running the App

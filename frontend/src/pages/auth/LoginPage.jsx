@@ -100,7 +100,7 @@ export default function LoginPage() {
         <div style={{ width: '100%', maxWidth: 400 }}>
           {/* Logo visible only on mobile header fallback */}
           <div className="mobile-logo-header" style={{ marginBottom: 32, display: 'none' }}>
-            <Logo size={32} withText={true} variant="dark" />
+            <Logo size={56} withText={true} variant="dark" />
           </div>
 
           <h2 style={{
@@ -202,7 +202,10 @@ export default function LoginPage() {
       <style>{`
         @media (max-width: 768px) {
           .auth-panel-left { display: none !important; }
-          .mobile-logo-header { display: block !important; }
+          .mobile-logo-header {
+            display: block !important;
+            padding-top: 32px;
+          }
         }
       `}</style>
     </div>
