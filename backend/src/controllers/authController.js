@@ -1,3 +1,4 @@
+import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import { config } from '../config/env.js';
 import { blacklistToken, isTokenBlacklisted } from '../config/redis.js';

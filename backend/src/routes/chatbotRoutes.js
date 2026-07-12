@@ -76,8 +76,14 @@ router.post('/chat', authenticate, async (req, res, next) => {
     ];
 
     // Invoke model
-    const response = await model.invoke(messages);
-    const aiResponse = response.content || 'I could not generate a response. Please try again.';
+    let aiResponse;
+    try {
+      const response = await model.invoke(messages);
+      aiResponse = response.content || 'I could not generate a response. Please try again.';
+    } catch (modelErr) {
+      console.warn('Gemini model invocation failed, using local fallback:', modelErr.message);
+      aiResponse = `I'm EcoBot, your ESG assistant. I am currently offline due to a connection limit or quota exhaustion with the Gemini API key. In the meantime, I can share this general advice: To reduce carbon footprint, focus on energy efficiency, encourage employee volunteering, and keep policy compliance audits transparent.`;
+    }
 
     // Update history (keep last 10 exchanges)
     history.push(new HumanMessage(message));

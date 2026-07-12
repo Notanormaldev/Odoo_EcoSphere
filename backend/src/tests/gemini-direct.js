@@ -12,7 +12,7 @@ async function runDirectGeminiTest() {
     process.exit(1);
   }
 
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${apiKey}`;
 
   try {
     const response = await axios.post(
