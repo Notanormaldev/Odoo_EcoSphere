@@ -226,11 +226,11 @@ const seedData = async () => {
     // 13. Policy Acknowledgements
     console.log('Seeding Policy Acknowledgements...');
     await PolicyAcknowledgement.create([
-      { user: employees[0]._id, policy: policies[0]._id, acknowledgedAt: getPastDate(1, 4) },
-      { user: employees[0]._id, policy: policies[1]._id, acknowledgedAt: getPastDate(1, 4) },
-      { user: employees[1]._id, policy: policies[1]._id, acknowledgedAt: getPastDate(1, 10) },
-      { user: employees[2]._id, policy: policies[0]._id, acknowledgedAt: getPastDate(0, 2) },
-      { user: employees[3]._id, policy: policies[2]._id, acknowledgedAt: getPastDate(0, 1) },
+      { employee: employees[0]._id, policy: policies[0]._id, acknowledgedAt: getPastDate(1, 4) },
+      { employee: employees[0]._id, policy: policies[1]._id, acknowledgedAt: getPastDate(1, 4) },
+      { employee: employees[1]._id, policy: policies[1]._id, acknowledgedAt: getPastDate(1, 10) },
+      { employee: employees[2]._id, policy: policies[0]._id, acknowledgedAt: getPastDate(0, 2) },
+      { employee: employees[3]._id, policy: policies[2]._id, acknowledgedAt: getPastDate(0, 1) },
     ]);
 
     // 14. Seed Audits
