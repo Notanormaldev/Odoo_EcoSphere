@@ -12,7 +12,13 @@ import { connectDB } from './src/config/database.js';
 import { connectRedis } from './src/config/redis.js';
 import { configurePassport } from './src/config/passport.js';
 import { errorHandler, notFound } from './src/middleware/errorHandler.js';
-import { createLimiter } from './src/middleware/rateLimiter.js';
+import {
+  globalLimiter,
+  authLimiter,
+  chatbotLimiter,
+  reportLimiter,
+  xssSanitiser,
+} from './src/middleware/rateLimiter.js';
 
 // Routes
 import authRoutes from './src/routes/authRoutes.js';
@@ -34,9 +40,35 @@ const app = express();
 app.set('trust proxy', 1);
 
 // ─── Security & Core Middleware ──────────────────────────────────────────────
+
+/**
+ * Helmet — sets security-critical HTTP headers.
+ *  • X-Content-Type-Options: nosniff         — prevents MIME sniffing
+ *  • X-Frame-Options: DENY                   — prevents clickjacking
+ *  • Strict-Transport-Security               — enforces HTTPS in production
+ *  • Content-Security-Policy                 — restricts resource origins to block XSS
+ */
 app.use(helmet({
   crossOriginResourcePolicy: { policy: 'cross-origin' },
-  contentSecurityPolicy: false,
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc:     ["'self'"],
+      scriptSrc:      ["'self'"],                          // no inline scripts
+      styleSrc:       ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+      fontSrc:        ["'self'", 'https://fonts.gstatic.com'],
+      imgSrc:         ["'self'", 'data:', 'https://ik.imagekit.io'],
+      connectSrc:     ["'self'"],
+      objectSrc:      ["'none'"],                          // blocks Flash/plugin injection
+      frameSrc:       ["'none'"],                          // blocks iframe embedding
+      upgradeInsecureRequests: [],
+    },
+  },
+  xssFilter: true,                   // X-XSS-Protection header (older browsers)
+  noSniff: true,                     // X-Content-Type-Options: nosniff
+  frameguard: { action: 'deny' },    // X-Frame-Options: DENY (clickjacking)
+  hsts: config.nodeEnv === 'production'
+    ? { maxAge: 31536000, includeSubDomains: true, preload: true }
+    : false,                         // only enforce HSTS in production
 }));
 
 app.use(cors({
@@ -47,18 +79,20 @@ app.use(cors({
 }));
 
 app.use(morgan(config.nodeEnv === 'production' ? 'combined' : 'dev'));
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(express.json({ limit: '2mb' }));       // reduced from 10mb — blocks payload bloat attacks
+app.use(express.urlencoded({ extended: true, limit: '2mb' }));
+
+// XSS input sanitiser — strips <script>, javascript:, iframe and inline event attrs
+// from req.body, req.query, req.params on every request
+app.use(xssSanitiser);
 
 // ─── Rate Limiting ───────────────────────────────────────────────────────────
-const globalLimiter = createLimiter(500, 15);
-const authLimiter = createLimiter(20, 15);
-const chatbotLimiter = createLimiter(30, 15); // limit chatbot queries to 30 per 15 min
 
-app.use('/api/', globalLimiter);
-app.use('/api/auth/login', authLimiter);
-app.use('/api/auth/register', authLimiter);
-app.use('/api/chatbot/chat', chatbotLimiter);
+app.use('/api/',             globalLimiter);     // 500 req / 15 min for all API routes
+app.use('/api/auth/login',   authLimiter);       // 10 req / 15 min — brute-force protection
+app.use('/api/auth/register', authLimiter);      // 10 req / 15 min — registration spam
+app.use('/api/chatbot/chat', chatbotLimiter);    // 30 req / 15 min — Gemini API quota protection
+app.use('/api/reports',      reportLimiter);     // 10 req / 60 min — bulk CSV scraping prevention
 
 // ─── Passport ────────────────────────────────────────────────────────────────
 configurePassport();
