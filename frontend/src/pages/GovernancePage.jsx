@@ -94,7 +94,7 @@ export default function GovernancePage() {
 
       {/* Policies */}
       {tab === 'policies' && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(320px,1fr))', gap: 16 }}>
+        <div className="grid-auto">
           {policies?.map(p => (
             <div key={p._id} className="card">
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>

@@ -82,7 +82,7 @@ export default function GamificationPage() {
 
       {/* Challenges */}
       {tab === 'challenges' && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(300px,1fr))', gap: 16 }}>
+        <div className="grid-auto">
           {challenges?.data?.map(c => (
             <div key={c._id} className="card" style={{ display: 'flex', flexDirection: 'column' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
@@ -132,7 +132,7 @@ export default function GamificationPage() {
 
       {/* Badges */}
       {tab === 'badges' && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(180px,1fr))', gap: 16 }}>
+        <div className="grid-auto">
           {badges?.map(b => (
             <div key={b._id} className="card card-sm" style={{
               textAlign: 'center',
@@ -165,7 +165,7 @@ export default function GamificationPage() {
 
       {/* Rewards */}
       {tab === 'rewards' && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(260px,1fr))', gap: 16 }}>
+        <div className="grid-auto">
           {rewards?.map(r => {
             const canAfford = (user?.points || 0) >= r.pointsRequired;
             return (

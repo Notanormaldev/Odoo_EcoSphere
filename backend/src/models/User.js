@@ -54,6 +54,11 @@ const userSchema = new mongoose.Schema(
       enum: ['male', 'female', 'non-binary', 'prefer-not-to-say'],
       default: 'prefer-not-to-say',
     },
+    bio: {
+      type: String,
+      maxlength: [250, 'Bio cannot exceed 250 characters'],
+      default: '',
+    },
     isEmailVerified: {
       type: Boolean,
       default: false,

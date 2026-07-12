@@ -20,6 +20,7 @@ const initModel = async () => {
       apiKey: config.geminiApiKey,
       temperature: 0.7,
       maxOutputTokens: 2048,
+      maxRetries: 0, // Fail immediately on quota/auth errors to trigger local fallback
     });
     console.log('[EcoBot] Gemini model initialized ✅');
     return chatModel;

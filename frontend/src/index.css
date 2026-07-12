@@ -210,6 +210,7 @@ h6 { font-size: var(--text-sm); font-weight: var(--fw-medium); }
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  min-width: 0; /* Fix flexbox child stretching/overflow */
   transition: margin-left var(--transition);
 }
 
@@ -228,6 +229,7 @@ h6 { font-size: var(--text-sm); font-weight: var(--fw-medium); }
   top: 0;
   z-index: 50;
   gap: var(--space-4);
+  min-width: 0;
 }
 
 .app-content {
@@ -235,6 +237,7 @@ h6 { font-size: var(--text-sm); font-weight: var(--fw-medium); }
   padding: var(--space-6);
   max-width: var(--content-max-width);
   width: 100%;
+  min-width: 0; /* Fix flexbox child stretching/overflow */
 }
 
 /* ─── Sidebar ─────────────────────────────────────────────────── */
@@ -716,6 +719,7 @@ h6 { font-size: var(--text-sm); font-weight: var(--fw-medium); }
   cursor: pointer;
   border-bottom: 2px solid transparent;
   white-space: nowrap;
+  flex-shrink: 0;
   transition: color var(--transition-fast), border-color var(--transition-fast);
   background: none;
   border-top: none;
@@ -1064,6 +1068,12 @@ h6 { font-size: var(--text-sm); font-weight: var(--fw-medium); }
   gap: var(--space-4);
 }
 
+.grid-3col {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-4);
+}
+
 .grid-auto {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -1076,7 +1086,8 @@ h6 { font-size: var(--text-sm); font-weight: var(--fw-medium); }
     --sidebar-width: 210px;
   }
 
-  .grid-chart-pie {
+  .grid-chart-pie,
+  .grid-3col {
     grid-template-columns: 1fr;
   }
 }
@@ -1098,6 +1109,18 @@ h6 { font-size: var(--text-sm); font-weight: var(--fw-medium); }
   /* Main content takes full width */
   .app-main {
     margin-left: 0 !important;
+  }
+
+  .app-header {
+    padding: 0 var(--space-4) !important;
+  }
+
+  .app-content {
+    padding: var(--space-4) !important;
+  }
+
+  .card {
+    padding: var(--space-4) !important;
   }
 
   /* Header adjustments */
@@ -1122,7 +1145,8 @@ h6 { font-size: var(--text-sm); font-weight: var(--fw-medium); }
 
   /* Dashboard charts: single column */
   .grid-chart-pie,
-  .grid-2col {
+  .grid-2col,
+  .grid-3col {
     grid-template-columns: 1fr;
   }
 
@@ -1168,14 +1192,36 @@ h6 { font-size: var(--text-sm); font-weight: var(--fw-medium); }
     padding: var(--space-3);
   }
 
-  /* KPI grid: single column on tiny screens */
+  /* KPI grid: keep 2 columns on small screens, just reduce card size */
   .kpi-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-2);
+  }
+
+  .kpi-card {
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .kpi-card-value {
+    font-size: var(--text-xl);
+    margin-bottom: var(--space-1);
+  }
+
+  .kpi-card-label {
+    font-size: 10px;
+    margin-bottom: var(--space-1);
+  }
+
+  .kpi-card-icon {
+    font-size: 16px;
+    right: 8px;
+    top: 8px;
   }
 
   /* Buttons in page actions wrap */
   .page-actions {
     flex-wrap: wrap;
+    gap: 8px;
   }
 
   /* Page title smaller */
@@ -1186,11 +1232,6 @@ h6 { font-size: var(--text-sm); font-weight: var(--fw-medium); }
   /* Modal form grids become single column */
   .modal .form-grid-2 {
     grid-template-columns: 1fr !important;
-  }
-
-  /* KPI card value slightly smaller */
-  .kpi-card-value {
-    font-size: var(--text-2xl);
   }
 
   /* Card padding reduced */
@@ -1285,7 +1326,23 @@ h6 { font-size: var(--text-sm); font-weight: var(--fw-medium); }
   line-height: 1.5;
 }
 
+
 .chat-input:focus {
   border-color: var(--color-forest);
   box-shadow: 0 0 0 3px rgba(45, 80, 22, 0.1);
+}
+
+/* ─── Utility Helpers ─────────────────────────────────────── */
+.w-full { width: 100%; }
+.text-center { text-align: center; }
+
+.divider {
+  border: none;
+  border-top: 1px solid var(--color-stone-200);
+  margin: 16px 0;
+}
+
+/* Spin animation for loading */
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }

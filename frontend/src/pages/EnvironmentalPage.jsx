@@ -181,7 +181,7 @@ export default function EnvironmentalPage() {
       </div>
 
       {tab === 'overview' && (
-        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 16 }}>
+        <div className="grid-chart-pie">
           <div className="card">
             <div className="card-header"><div className="card-title">Monthly Emissions (CO₂e kg)</div></div>
             <ResponsiveContainer width="100%" height={240}>
@@ -272,7 +272,7 @@ export default function EnvironmentalPage() {
       )}
 
       {tab === 'goals' && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(300px,1fr))', gap: 16 }}>
+        <div className="grid-auto">
           {goals?.map(goal => (
             <div key={goal._id} className="card">
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>

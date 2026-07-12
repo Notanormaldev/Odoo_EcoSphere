@@ -1,16 +1,35 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 import api from '@shared/api/client';
 import useAuthStore from '@app/store/authStore';
 
 export default function SettingsPage() {
-  const { user } = useAuthStore();
+  const { user, setUser, logout } = useAuthStore();
   const qc = useQueryClient();
+  const navigate = useNavigate();
   const isAdmin = user?.role === 'admin';
-  const [tab, setTab] = useState('notifications');
+  const [tab, setTab] = useState('profile'); // 'profile' | 'notifications' | 'security' | 'organization'
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
-  // Fetch ESG settings
+  // Profile Form state
+  const [profileForm, setProfileForm] = useState({
+    name: user?.name || '',
+    designation: user?.designation || '',
+    gender: user?.gender || 'prefer-not-to-say',
+    bio: user?.bio || '',
+    avatar: user?.avatar || ''
+  });
+
+  // Password Form state
+  const [pwForm, setPwForm] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  });
+
+  // Organization settings query (Admin only)
   const { data: esgConfig } = useQuery({
     queryKey: ['esg-settings'],
     queryFn: () => api.get('/notifications/settings').then(r => r.data.data),
@@ -38,6 +57,27 @@ export default function SettingsPage() {
     }
   }, [esgConfig]);
 
+  const updateProfileMutation = useMutation({
+    mutationFn: (data) => api.put('/users/me/profile', data),
+    onSuccess: ({ data }) => {
+      toast.success('Profile updated successfully');
+      setUser(data.data);
+      qc.invalidateQueries({ queryKey: ['auth-user'] });
+    },
+    onError: () => toast.error('Failed to update profile')
+  });
+
+  const changePasswordMutation = useMutation({
+    mutationFn: (data) => api.put('/users/me/password', data),
+    onSuccess: () => {
+      toast.success('Password changed successfully');
+      setPwForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
+    },
+    onError: (err) => {
+      toast.error(err.response?.data?.message || 'Failed to change password');
+    }
+  });
+
   const updatePreferencesMutation = useMutation({
     mutationFn: (prefs) => api.put('/notifications/preferences', prefs),
     onSuccess: () => {
@@ -56,6 +96,25 @@ export default function SettingsPage() {
     onError: () => toast.error('Failed to update organization settings'),
   });
 
+  const handleProfileSubmit = (e) => {
+    e.preventDefault();
+    updateProfileMutation.mutate(profileForm);
+  };
+
+  const handlePasswordSubmit = (e) => {
+    e.preventDefault();
+    if (pwForm.newPassword !== pwForm.confirmPassword) {
+      return toast.error('Passwords do not match');
+    }
+    if (pwForm.newPassword.length < 8) {
+      return toast.error('New password must be at least 8 characters');
+    }
+    changePasswordMutation.mutate({
+      currentPassword: pwForm.currentPassword,
+      newPassword: pwForm.newPassword
+    });
+  };
+
   const handleOrgSubmit = (e) => {
     e.preventDefault();
     const sum = Number(orgForm.scoreWeights.environmental) + Number(orgForm.scoreWeights.social) + Number(orgForm.scoreWeights.governance);
@@ -65,29 +124,116 @@ export default function SettingsPage() {
     updateConfigMutation.mutate(orgForm);
   };
 
+  const handleConfirmLogout = () => {
+    logout();
+    toast.success('Logged out successfully');
+    navigate('/login');
+  };
+
   return (
-    <div className="animate-fade-in">
+    <div className="animate-fade-in" style={{ position: 'relative' }}>
       <div className="page-header">
         <div>
           <h1 className="page-title">⚙️ Settings</h1>
-          <p className="page-subtitle">Configure notification settings and organization-wide parameters</p>
+          <p className="page-subtitle">Configure personal profile, notification options, and system parameters</p>
+        </div>
+        <div className="page-actions">
+          <button
+            className="btn btn-ghost"
+            style={{ color: 'var(--color-danger)', border: '1px solid var(--color-danger)' }}
+            onClick={() => setShowLogoutModal(true)}
+          >
+            👋 Log Out
+          </button>
         </div>
       </div>
 
-      <div className="tabs">
+      <div className="tabs" style={{ marginBottom: 24 }}>
+        <button className={`tab ${tab === 'profile' ? 'active' : ''}`} onClick={() => setTab('profile')}>
+          My Profile
+        </button>
         <button className={`tab ${tab === 'notifications' ? 'active' : ''}`} onClick={() => setTab('notifications')}>
           Notifications
         </button>
+        <button className={`tab ${tab === 'security' ? 'active' : ''}`} onClick={() => setTab('security')}>
+          Security & Password
+        </button>
         {isAdmin && (
           <button className={`tab ${tab === 'organization' ? 'active' : ''}`} onClick={() => setTab('organization')}>
-            Organization ESG Settings
+            Organization ESG
           </button>
         )}
       </div>
 
+      {/* Profile Settings Tab */}
+      {tab === 'profile' && (
+        <form onSubmit={handleProfileSubmit} className="card" style={{ maxWidth: 650, padding: 32 }}>
+          <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 4 }}>Profile Details</h3>
+          <p style={{ color: 'var(--color-stone-500)', fontSize: 13, marginBottom: 24 }}>
+            Update your public profile information and description bio
+          </p>
+
+          <div className="form-group">
+            <label className="form-label required">Full Name</label>
+            <input
+              type="text"
+              className="form-input"
+              value={profileForm.name}
+              onChange={(e) => setProfileForm({ ...profileForm, name: e.target.value })}
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Designation</label>
+            <input
+              type="text"
+              className="form-input"
+              value={profileForm.designation}
+              onChange={(e) => setProfileForm({ ...profileForm, designation: e.target.value })}
+            />
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Gender</label>
+            <select
+              className="form-select"
+              value={profileForm.gender}
+              onChange={(e) => setProfileForm({ ...profileForm, gender: e.target.value })}
+            >
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="non-binary">Non-Binary</option>
+              <option value="prefer-not-to-say">Prefer Not To Say</option>
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Description / Bio</label>
+            <textarea
+              className="form-input"
+              rows={4}
+              style={{ resize: 'vertical' }}
+              placeholder="Write a brief introduction about your focus on sustainability..."
+              value={profileForm.bio}
+              onChange={(e) => setProfileForm({ ...profileForm, bio: e.target.value })}
+              maxLength={250}
+            />
+            <div style={{ fontSize: 11, color: 'var(--color-stone-400)', marginTop: 4, textAlign: 'right' }}>
+              {profileForm.bio.length}/250 characters
+            </div>
+          </div>
+
+          <button type="submit" className="btn btn-primary" style={{ width: '100%', justifyContent: 'center' }} disabled={updateProfileMutation.isPending}>
+            {updateProfileMutation.isPending ? 'Saving...' : 'Save Profile Changes'}
+          </button>
+        </form>
+      )}
+
+      {/* Notifications Tab */}
       {tab === 'notifications' && (
-        <div className="card" style={{ maxWidth: 600 }}>
-          <h3 style={{ marginBottom: 16 }}>My Preferences</h3>
+        <div className="card" style={{ maxWidth: 650, padding: 32 }}>
+          <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 4 }}>Notification Preferences</h3>
           <p style={{ color: 'var(--color-stone-500)', fontSize: 13, marginBottom: 24 }}>
             Choose how you would like to receive updates from EcoSphere
           </p>
@@ -99,7 +245,7 @@ export default function SettingsPage() {
             </div>
             <input
               type="checkbox"
-              style={{ width: 20, height: 20, accentColor: 'var(--color-forest)' }}
+              style={{ width: 20, height: 20, accentColor: 'var(--color-forest)', cursor: 'pointer' }}
               checked={user?.notificationPreferences?.inApp ?? true}
               onChange={(e) => updatePreferencesMutation.mutate({
                 ...user?.notificationPreferences,
@@ -115,7 +261,7 @@ export default function SettingsPage() {
             </div>
             <input
               type="checkbox"
-              style={{ width: 20, height: 20, accentColor: 'var(--color-forest)' }}
+              style={{ width: 20, height: 20, accentColor: 'var(--color-forest)', cursor: 'pointer' }}
               checked={user?.notificationPreferences?.email ?? true}
               onChange={(e) => updatePreferencesMutation.mutate({
                 ...user?.notificationPreferences,
@@ -126,9 +272,57 @@ export default function SettingsPage() {
         </div>
       )}
 
+      {/* Security & Password Tab */}
+      {tab === 'security' && (
+        <form onSubmit={handlePasswordSubmit} className="card" style={{ maxWidth: 650, padding: 32 }}>
+          <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 4 }}>Change Password</h3>
+          <p style={{ color: 'var(--color-stone-500)', fontSize: 13, marginBottom: 24 }}>
+            Ensure your account is using a secure and robust password
+          </p>
+
+          <div className="form-group">
+            <label className="form-label required">Current Password</label>
+            <input
+              type="password"
+              className="form-input"
+              value={pwForm.currentPassword}
+              onChange={(e) => setPwForm({ ...pwForm, currentPassword: e.target.value })}
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label className="form-label required">New Password</label>
+            <input
+              type="password"
+              className="form-input"
+              value={pwForm.newPassword}
+              onChange={(e) => setPwForm({ ...pwForm, newPassword: e.target.value })}
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label className="form-label required">Confirm New Password</label>
+            <input
+              type="password"
+              className="form-input"
+              value={pwForm.confirmPassword}
+              onChange={(e) => setPwForm({ ...pwForm, confirmPassword: e.target.value })}
+              required
+            />
+          </div>
+
+          <button type="submit" className="btn btn-primary" style={{ width: '100%', justifyContent: 'center' }} disabled={changePasswordMutation.isPending}>
+            {changePasswordMutation.isPending ? 'Updating Password...' : 'Change Password'}
+          </button>
+        </form>
+      )}
+
+      {/* Organization Settings Tab (Admin only) */}
       {tab === 'organization' && isAdmin && (
-        <form onSubmit={handleOrgSubmit} className="card" style={{ maxWidth: 650 }}>
-          <h3 style={{ marginBottom: 16 }}>Organization Parameters</h3>
+        <form onSubmit={handleOrgSubmit} className="card" style={{ maxWidth: 650, padding: 32 }}>
+          <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 4 }}>Organization Parameters</h3>
           <p style={{ color: 'var(--color-stone-500)', fontSize: 13, marginBottom: 24 }}>
             Global sustainability toggles and weighting configurations
           </p>
@@ -146,7 +340,7 @@ export default function SettingsPage() {
 
           <div className="divider" />
 
-          <h4 style={{ marginBottom: 16, fontSize: 15, fontWeight: 600 }}>Feature Toggles</h4>
+          <h4 style={{ marginBottom: 16, fontSize: 14, fontWeight: 600 }}>Feature Toggles</h4>
 
           <div className="form-group" style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
             <div>
@@ -155,7 +349,7 @@ export default function SettingsPage() {
             </div>
             <input
               type="checkbox"
-              style={{ width: 18, height: 18, accentColor: 'var(--color-forest)' }}
+              style={{ width: 18, height: 18, accentColor: 'var(--color-forest)', cursor: 'pointer' }}
               checked={orgForm.evidenceRequiredForCSR}
               onChange={(e) => setOrgForm({ ...orgForm, evidenceRequiredForCSR: e.target.checked })}
             />
@@ -168,7 +362,7 @@ export default function SettingsPage() {
             </div>
             <input
               type="checkbox"
-              style={{ width: 18, height: 18, accentColor: 'var(--color-forest)' }}
+              style={{ width: 18, height: 18, accentColor: 'var(--color-forest)', cursor: 'pointer' }}
               checked={orgForm.badgeAutoAward}
               onChange={(e) => setOrgForm({ ...orgForm, badgeAutoAward: e.target.checked })}
             />
@@ -176,9 +370,9 @@ export default function SettingsPage() {
 
           <div className="divider" />
 
-          <h4 style={{ marginBottom: 12, fontSize: 15, fontWeight: 600 }}>ESG Score Weights (Sum must equal 1.0)</h4>
+          <h4 style={{ marginBottom: 12, fontSize: 14, fontWeight: 600 }}>ESG Score Weights (Sum must equal 1.0)</h4>
           
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 24 }}>
+          <div className="grid-3col" style={{ marginBottom: 24 }}>
             <div className="form-group">
               <label className="form-label">Environmental (E)</label>
               <input
@@ -226,10 +420,59 @@ export default function SettingsPage() {
             </div>
           </div>
 
-          <button type="submit" className="btn btn-primary" disabled={updateConfigMutation.isPending}>
+          <button type="submit" className="btn btn-primary" style={{ width: '100%', justifyContent: 'center' }} disabled={updateConfigMutation.isPending}>
             {updateConfigMutation.isPending ? 'Saving...' : 'Save Settings'}
           </button>
         </form>
+      )}
+
+      {/* Logout Confirmation Modal Dialog */}
+      {showLogoutModal && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          background: 'rgba(0,0,0,0.5)', zIndex: 9999,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          animation: 'fadeIn 0.2s ease',
+          padding: 16,
+        }}>
+          <div className="card" style={{
+            maxWidth: 400, width: '100%', padding: '32px 24px',
+            boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04)',
+            animation: 'slideUp 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+            textAlign: 'center'
+          }}>
+            <div style={{
+              width: 56, height: 56, borderRadius: '50%',
+              background: 'var(--color-danger-pale)', color: 'var(--color-danger)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: 24, margin: '0 auto 16px'
+            }}>
+              👋
+            </div>
+            <h3 style={{ fontSize: 18, fontWeight: 700, color: 'var(--color-stone-900)', marginBottom: 8 }}>
+              Log Out of EcoSphere?
+            </h3>
+            <p style={{ color: 'var(--color-stone-500)', fontSize: 13, marginBottom: 24, lineHeight: 1.5 }}>
+              Are you sure you want to end your session? You will need to enter your email and password to log in again.
+            </p>
+            <div style={{ display: 'flex', gap: 12 }}>
+              <button
+                className="btn btn-secondary w-full"
+                style={{ justifyContent: 'center' }}
+                onClick={() => setShowLogoutModal(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="btn btn-primary w-full"
+                style={{ background: 'var(--color-danger)', borderColor: 'var(--color-danger)', justifyContent: 'center' }}
+                onClick={handleConfirmLogout}
+              >
+                Log Out
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

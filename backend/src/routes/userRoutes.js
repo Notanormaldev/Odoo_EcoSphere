@@ -50,7 +50,7 @@ router.get('/:id', authenticate, async (req, res, next) => {
 // UPDATE current user profile
 router.put('/me/profile', authenticate, async (req, res, next) => {
   try {
-    const allowedFields = ['name', 'designation', 'gender', 'avatar', 'notificationPreferences'];
+    const allowedFields = ['name', 'designation', 'gender', 'avatar', 'bio', 'notificationPreferences'];
     const updates = {};
     allowedFields.forEach((f) => { if (req.body[f] !== undefined) updates[f] = req.body[f]; });
 

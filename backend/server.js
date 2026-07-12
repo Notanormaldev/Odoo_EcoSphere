@@ -82,6 +82,20 @@ app.get('/health', (req, res) => {
   });
 });
 
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Serve React production build static files
+if (config.nodeEnv === 'production') {
+  app.use(express.static(path.join(__dirname, '../frontend/dist')));
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
+  });
+}
+
 // ─── 404 & Error Handler ─────────────────────────────────────────────────────
 app.use(notFound);
 app.use(errorHandler);

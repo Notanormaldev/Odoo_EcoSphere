@@ -10,7 +10,8 @@ export default function ProfilePage() {
   const [profileForm, setProfileForm] = useState({
     name: user?.name || '',
     designation: user?.designation || '',
-    gender: user?.gender || 'male',
+    gender: user?.gender || 'prefer-not-to-say',
+    bio: user?.bio || '',
     avatar: user?.avatar || ''
   });
 
@@ -30,7 +31,7 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="animate-fade-in" style={{ maxWidth: 800 }}>
+    <div className="animate-fade-in" style={{ maxWidth: 880 }}>
       <div className="page-header">
         <div>
           <h1 className="page-title">👤 My Profile</h1>
@@ -38,34 +39,86 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 16 }}>
+      <div className="grid-chart-pie">
         {/* Profile Card & Badges */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <div className="card" style={{ textAlign: 'center' }}>
+          <div className="card" style={{ textAlign: 'center', padding: '32px 24px' }}>
             <div style={{
-              width: 80, height: 80, borderRadius: '50%',
+              width: 90, height: 90, borderRadius: '50%',
               background: 'var(--color-forest-pale)', color: 'var(--color-forest)',
               display: 'flex', alignItems: 'center', justifySelf: 'center', justifyContent: 'center',
-              fontWeight: 700, fontSize: 32, margin: '0 auto 16px'
+              fontWeight: 700, fontSize: 36, margin: '0 auto 16px',
+              border: '3px solid var(--color-forest-light)',
             }}>
               {user?.name?.[0]?.toUpperCase()}
             </div>
-            <h3 style={{ fontSize: 18, marginBottom: 4 }}>{user?.name}</h3>
-            <p style={{ color: 'var(--color-stone-500)', fontSize: 13, marginBottom: 12 }}>
-              {user?.designation || 'Employee'}
+            <h3 style={{ fontSize: 18, fontWeight: 700, color: 'var(--color-stone-900)', marginBottom: 4 }}>{user?.name}</h3>
+            <p style={{ color: 'var(--color-stone-600)', fontSize: 13, marginBottom: 12 }}>
+              {user?.designation || 'Sustainability Partner'}
             </p>
-            <span className="badge badge-forest">{user?.role}</span>
+            <span className="badge badge-forest" style={{ padding: '4px 10px', fontSize: 11 }}>{user?.role?.toUpperCase()}</span>
+
+            {/* Profile Bio View */}
+            {user?.bio && (
+              <div style={{
+                marginTop: 20, paddingTop: 16, borderTop: 'var(--border)',
+                fontSize: 13, color: 'var(--color-stone-600)', fontStyle: 'italic',
+                lineHeight: 1.5,
+              }}>
+                "{user.bio}"
+              </div>
+            )}
           </div>
 
           <div className="card">
-            <h4 style={{ marginBottom: 12 }}>Badges Earned</h4>
+            <h4 style={{ fontSize: 14, fontWeight: 700, color: 'var(--color-stone-800)', marginBottom: 12 }}>
+              🏢 Organization Info
+            </h4>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8, fontSize: 13 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ color: 'var(--color-stone-500)' }}>Employee ID:</span>
+                <span style={{ fontWeight: 600, color: 'var(--color-stone-800)' }}>{user?.employeeId || 'N/A'}</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ color: 'var(--color-stone-500)' }}>Email:</span>
+                <span style={{ fontWeight: 600, color: 'var(--color-stone-800)' }}>{user?.email}</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ color: 'var(--color-stone-500)' }}>Department:</span>
+                <span style={{ fontWeight: 600, color: 'var(--color-stone-800)' }}>
+                  {user?.department?.name || 'Unassigned'}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="card">
+            <h4 style={{ fontSize: 14, fontWeight: 700, color: 'var(--color-stone-800)', marginBottom: 12 }}>
+              🏆 Gamification Stats
+            </h4>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8, fontSize: 13 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ color: 'var(--color-stone-500)' }}>XP Earned:</span>
+                <span style={{ fontWeight: 600, color: 'var(--color-forest)' }}>{user?.xp || 0} XP</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ color: 'var(--color-stone-500)' }}>Points:</span>
+                <span style={{ fontWeight: 600, color: 'var(--color-copper)' }}>{user?.points || 0} pts</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="card">
+            <h4 style={{ fontSize: 14, fontWeight: 700, color: 'var(--color-stone-800)', marginBottom: 12 }}>
+              🥇 Badges Earned ({user?.badges?.length || 0})
+            </h4>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
               {user?.badges?.length ? user.badges.map(b => (
                 <div key={b._id} style={{
                   width: 44, height: 44, background: 'var(--color-stone-50)',
                   border: 'var(--border)', borderRadius: 'var(--radius)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: 20
+                  fontSize: 20, cursor: 'help'
                 }} title={`${b.name}: ${b.description}`}>
                   {b.icon}
                 </div>
@@ -77,11 +130,17 @@ export default function ProfilePage() {
         </div>
 
         {/* Profile Form */}
-        <div className="card">
-          <h3 style={{ marginBottom: 16 }}>Personal Details</h3>
+        <div className="card" style={{ padding: '32px' }}>
+          <h3 style={{ fontSize: 18, fontWeight: 700, color: 'var(--color-stone-900)', marginBottom: 8 }}>
+            Personal Details
+          </h3>
+          <p style={{ fontSize: 13, color: 'var(--color-stone-500)', marginBottom: 24 }}>
+            Update your basic info and description bio
+          </p>
+
           <form onSubmit={handleSubmit}>
             <div className="form-group">
-              <label className="form-label required">Name</label>
+              <label className="form-label required">Full Name</label>
               <input
                 type="text"
                 className="form-input"
@@ -110,12 +169,29 @@ export default function ProfilePage() {
               >
                 <option value="male">Male</option>
                 <option value="female">Female</option>
-                <option value="other">Other</option>
+                <option value="non-binary">Non-Binary</option>
+                <option value="prefer-not-to-say">Prefer Not To Say</option>
               </select>
             </div>
 
-            <button type="submit" className="btn btn-primary" disabled={updateProfileMutation.isPending}>
-              {updateProfileMutation.isPending ? 'Updating...' : 'Save Profile'}
+            <div className="form-group">
+              <label className="form-label">Description / Bio</label>
+              <textarea
+                className="form-input"
+                rows={4}
+                style={{ resize: 'vertical' }}
+                placeholder="Tell us about your interest in sustainability..."
+                value={profileForm.bio}
+                onChange={(e) => setProfileForm({ ...profileForm, bio: e.target.value })}
+                maxLength={250}
+              />
+              <div style={{ fontSize: 11, color: 'var(--color-stone-400)', marginTop: 4, textAlign: 'right' }}>
+                {profileForm.bio.length}/250 characters
+              </div>
+            </div>
+
+            <button type="submit" className="btn btn-primary" style={{ width: '100%', justifyContent: 'center', marginTop: 12 }} disabled={updateProfileMutation.isPending}>
+              {updateProfileMutation.isPending ? 'Updating...' : 'Save Profile Changes'}
             </button>
           </form>
         </div>

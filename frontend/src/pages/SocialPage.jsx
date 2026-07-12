@@ -75,7 +75,7 @@ export default function SocialPage() {
 
       {/* Activities */}
       {tab === 'activities' && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(320px,1fr))', gap: 16 }}>
+        <div className="grid-auto">
           {isLoading && [1,2,3].map(i => (
             <div key={i} className="card">
               <div className="skeleton" style={{ height: 20, width: '60%', marginBottom: 12 }} />
@@ -194,7 +194,7 @@ export default function SocialPage() {
 
       {/* Diversity */}
       {tab === 'diversity' && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(240px,1fr))', gap: 16 }}>
+        <div className="grid-auto">
           <div className="card" style={{ gridColumn: '1/-1' }}>
             <div className="card-title" style={{ marginBottom: 16 }}>Gender Distribution</div>
             <div style={{ display: 'flex', gap: 32, flexWrap: 'wrap' }}>

@@ -108,7 +108,7 @@ export default function ReportsPage() {
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 16, marginBottom: 16 }}>
+          <div className="grid-chart-pie" style={{ marginBottom: 16 }}>
             <div className="card">
               <div className="card-header">
                 <div className="card-title">CO₂ Emissions Trend (Last 12 Months)</div>
@@ -151,7 +151,7 @@ export default function ReportsPage() {
       {/* Environmental */}
       {tab === 'environmental' && (
         <div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
+          <div className="grid-2col" style={{ marginBottom: 16 }}>
             <div className="card">
               <div className="card-header"><div className="card-title">Emissions by Scope</div></div>
               <ResponsiveContainer width="100%" height={200}>
@@ -200,7 +200,7 @@ export default function ReportsPage() {
 
       {/* Social Report */}
       {tab === 'social' && (
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+        <div className="grid-2col">
           <div className="card">
             <div className="card-header"><div className="card-title">Gender Distribution</div></div>
             <ResponsiveContainer width="100%" height={200}>
@@ -234,7 +234,7 @@ export default function ReportsPage() {
       {/* Governance Report */}
       {tab === 'governance' && (
         <div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16, marginBottom: 16 }}>
+          <div className="grid-3col" style={{ marginBottom: 16 }}>
             <div className="kpi-card">
               <div className="kpi-card-label">Total Policies</div>
               <div className="kpi-card-value">{govReport?.policies?.length || 0}</div>
