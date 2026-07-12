@@ -62,7 +62,7 @@ Environmental + Social + Governance — all three pillars, one login.
 │   ─────────────────         ──────────────         ───────────── │
 │   Scope 1/2/3 logging       CSR event workflows     Policy pub +  │
 │   Emission factor engine    Volunteer verification  acknowledge   │
-│   Goal tracking             Diversity analytics     Audit trails │
+│   Goal tracking             Diversity analytics     Audit trails  │
 │   On-Track / At-Risk tags   Manager approvals       Issue severity│
 │                                                                    │
 │              🏆 GAMIFICATION        💬 ECOBOT AI                  │
@@ -96,12 +96,54 @@ Environmental + Social + Governance — all three pillars, one login.
 
 </div>
 
-### 🔐 security, taken seriously (not just a Helmet import for show)
+### 🔐 security architecture (actually enforced, not just vibes)
 
-- Dual-token JWT system — short-lived access tokens, HttpOnly refresh cookies
-- Redis-backed token blacklist — logout actually logs you out, everywhere, instantly
-- Helmet + CORS + rate limiting — 100 req/15min general, 5 req/15min on auth routes (credential-stuffing can go cry somewhere else)
-- bcrypt @ 12 rounds — no plaintext passwords, ever
+#### 🛡️ Helmet — HTTP Security Headers
+
+Every response carries hardened headers set by [Helmet](https://helmetjs.github.io/):
+
+| Header | Value | Protects Against |
+|---|---|---|
+| `Content-Security-Policy` | `default-src 'self'`, no inline scripts | XSS, script injection |
+| `X-Content-Type-Options` | `nosniff` | MIME-type sniffing |
+| `X-Frame-Options` | `DENY` | Clickjacking |
+| `X-XSS-Protection` | `1; mode=block` | Reflected XSS (legacy browsers) |
+| `Strict-Transport-Security` | `max-age=31536000; includeSubDomains; preload` | SSL stripping (production only) |
+| `Cross-Origin-Resource-Policy` | `cross-origin` | Cross-origin data leaks |
+
+#### 🧹 XSS Input Sanitiser
+
+A custom middleware (`xssSanitiser`) strips dangerous patterns from **every** incoming `req.body`, `req.query`, and `req.params` before it touches any controller:
+
+- `<script>…</script>` blocks removed
+- `javascript:` protocol URIs stripped
+- Inline event handlers (`onclick=`, `onload=`, etc.) stripped
+- `<iframe>` tags removed
+- HTML comment injections (`<!-- -->`) removed
+
+#### ⏱️ Rate Limiting — Per-Route Caps
+
+| Route | Limit | Window | Blocks |
+|---|---|---|---|
+| All `/api/*` routes | 500 req | 15 min | General abuse / DDoS |
+| `/api/auth/login` | 10 req | 15 min | Credential stuffing / brute force |
+| `/api/auth/register` | 10 req | 15 min | Registration spam |
+| `/api/chatbot/chat` | 30 req | 15 min | Gemini API quota abuse |
+| `/api/reports` | 10 req | 60 min | Bulk CSV scraping |
+
+All limiters return RFC 6585 `RateLimit-*` response headers. When a cap is hit, the API returns `429 Too Many Requests` with a `retryAfter` field — no cryptic error pages.
+
+#### 🔑 Authentication
+
+- **Dual-token JWT** — short-lived (15 min) access tokens + long-lived (7 day) refresh tokens in HttpOnly cookies
+- **Redis token blacklist** — logout is instant everywhere; intercepted tokens are dead on arrival
+- **bcrypt @ 12 rounds** — no plaintext passwords, ever
+- **Google OAuth 2.0** — corporate SSO without password exposure
+
+#### 📦 Payload Hardening
+
+- JSON body limit set to **2 MB** — blocks payload bloat / memory exhaustion attacks
+- `express.urlencoded` limit also set to **2 MB**
 
 <br>
 
@@ -113,7 +155,7 @@ Environmental + Social + Governance — all three pillars, one login.
                  │  HTTP JSON
                  ▼
       Express API Gateway
-   (Helmet · Rate Limiter · Passport Auth)
+   (Helmet CSP · XSS Sanitiser · Rate Limiter · Passport Auth)
         │         │           │
         ▼         ▼           ▼
     MongoDB     Redis      Gemini API
@@ -127,11 +169,6 @@ Client-side rendering keeps the server lean. Redis keeps auth fast. The AI layer
 
 ## 🚀 run it yourself
 
-<<<<<<< HEAD
-### 3. Installation
-You can install dependencies for both frontend and backend using the root scripts:
-=======
->>>>>>> db70ead6f4d8975e3534bb40f28b4686c62a4b67
 ```bash
 # clone the crime scene
 git clone https://github.com/Notanormaldev/Odoo_EcoSphere.git
@@ -143,20 +180,12 @@ cp backend/.env.example backend/.env
 
 # install everything, both sides
 npm run install-all
-<<<<<<< HEAD
-```
-=======
-
-# seed some demo ESG chaos
-cd backend && npm run seed
->>>>>>> db70ead6f4d8975e3534bb40f28b4686c62a4b67
 
 # fire it up (frontend + backend together)
-cd ..
 node dev.js
 ```
 
-Open `http://localhost:5173` and pretend you're the Chief ESG Strategist. (Spoiler: the seeded employee literally has that title.)
+Open `http://localhost:5173` and pretend you're the Chief ESG Strategist.
 
 <br>
 
@@ -170,7 +199,7 @@ Desktop gets the full sidebar + grid experience. Tablet collapses gracefully. Mo
 
 ## 👾 Team Clickjack
 
-We don't do vaporware. We don't do "coming soon." We ship, we seed the database, we deploy to Render, and we write READMEs with ASCII banners at 2 AM.
+We don't do vaporware. We don't do "coming soon." We ship, we deploy to Render, and we write READMEs with ASCII banners at 2 AM.
 
 <div align="center">
 
