@@ -251,11 +251,12 @@ const seedData = async () => {
 
     // 16. Seed Department Scores
     console.log('Seeding Department Scores...');
+    const periodString = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
     await DepartmentScore.create([
-      { department: hrDept._id, month: now.getMonth() + 1, year: now.getFullYear(), environmentalScore: 82, socialScore: 95, governanceScore: 88, overallScore: 88.3 },
-      { department: engDept._id, month: now.getMonth() + 1, year: now.getFullYear(), environmentalScore: 76, socialScore: 80, governanceScore: 85, overallScore: 80.3 },
-      { department: salesDept._id, month: now.getMonth() + 1, year: now.getFullYear(), environmentalScore: 68, socialScore: 88, governanceScore: 78, overallScore: 78.0 },
-      { department: opsDept._id, month: now.getMonth() + 1, year: now.getFullYear(), environmentalScore: 90, socialScore: 82, governanceScore: 92, overallScore: 88.0 },
+      { department: hrDept._id, period: periodString, environmentalScore: 82, socialScore: 95, governanceScore: 88, totalScore: 88 },
+      { department: engDept._id, period: periodString, environmentalScore: 76, socialScore: 80, governanceScore: 85, totalScore: 80 },
+      { department: salesDept._id, period: periodString, environmentalScore: 68, socialScore: 88, governanceScore: 78, totalScore: 78 },
+      { department: opsDept._id, period: periodString, environmentalScore: 90, socialScore: 82, governanceScore: 92, totalScore: 88 },
     ]);
 
     console.log('Seeding completed successfully!');
