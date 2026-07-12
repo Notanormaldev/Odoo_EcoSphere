@@ -1,3 +1,4 @@
+import { jest } from '@jest/globals';
 import { requestLogger } from '../middleware/requestLogger.js';
 
 describe('Request Logger Middleware', () => {
