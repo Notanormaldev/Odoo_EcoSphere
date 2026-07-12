@@ -26,6 +26,8 @@ import notificationRoutes from './src/routes/notificationRoutes.js';
 import reportRoutes from './src/routes/reportRoutes.js';
 import chatbotRoutes from './src/routes/chatbotRoutes.js';
 
+import { logger } from './src/utils/logger.js';
+
 const app = express();
 
 // ─── Security & Core Middleware ──────────────────────────────────────────────
@@ -102,24 +104,24 @@ const startServer = async () => {
     connectRedis();
 
     app.listen(config.port, () => {
-      console.log(`\n🚀 EcoSphere API running on port ${config.port}`);
-      console.log(`🌍 Environment: ${config.nodeEnv}`);
-      console.log(`🔗 Health check: http://localhost:${config.port}/health\n`);
+      logger.info(`EcoSphere API running on port ${config.port}`);
+      logger.info(`Environment: ${config.nodeEnv}`);
+      logger.info(`Health check: http://localhost:${config.port}/health`);
     });
   } catch (err) {
-    console.error('❌ Failed to start server:', err);
+    logger.error('Failed to start server', err);
     process.exit(1);
   }
 };
 
 // Handle unhandled rejections
 process.on('unhandledRejection', (err) => {
-  console.error('Unhandled Rejection:', err);
+  logger.error('Unhandled Rejection', err);
   process.exit(1);
 });
 
 process.on('uncaughtException', (err) => {
-  console.error('Uncaught Exception:', err);
+  logger.error('Uncaught Exception', err);
   process.exit(1);
 });
 
