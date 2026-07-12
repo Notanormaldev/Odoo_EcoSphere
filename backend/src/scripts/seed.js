@@ -84,6 +84,8 @@ const seedData = async () => {
 
     const hrDept = depts[0];
     const engDept = depts[1];
+    const salesDept = depts[2];
+    const opsDept = depts[3];
 
     // 3. Create Categories
     console.log('Seeding Categories...');
@@ -160,7 +162,6 @@ const seedData = async () => {
     console.log('Seeding Carbon Transactions...');
     const now = new Date();
     const mockTransactions = [];
-    const depts = [hrDept, engDept, salesDept, opsDept];
 
     // Helper to generate dates in previous months
     const getPastDate = (monthsAgo, day) => {
