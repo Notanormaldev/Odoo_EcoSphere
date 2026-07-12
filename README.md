@@ -52,11 +52,33 @@ Environmental + Social + Governance — all three pillars, one login.
 
 ---
 
+## 📸 platform interface showcase
+
+### 🖥️ Desktop Interface
+
+| Dashboard | Environmental Module |
+|---|---|
+| <img src="screenshots/dashboard_desktop.png" alt="EcoSphere Desktop Dashboard" width="400" /> | <img src="screenshots/environmental_desktop.png" alt="Environmental Carbon Tracking" width="400" /> |
+
+| Reports & Analytics |
+|---|
+| <img src="screenshots/reports_desktop.png" alt="Reports & Analytics Dashboard" width="820" /> |
+
+### 📱 Mobile Responsiveness
+
+| Mobile Dashboard | Mobile Governance | Mobile Social |
+|---|---|---|
+| <img src="screenshots/dashboard_mobile.png" alt="Mobile Dashboard View" width="260" /> | <img src="screenshots/governance_mobile.png" alt="Mobile Governance Policies" width="260" /> | <img src="screenshots/social_mobile.png" alt="Mobile Social View" width="260" /> |
+
+<br>
+
+---
+
 ## 🧩 what's actually inside
 
 ```
 ┌──────────────────────────────────────────────────────────────────┐
-│                        E C O S P H E R E                         │
+│                        E C O S P H E R E                          │
 │                                                                    │
 │   🌿 ENVIRONMENTAL          🤝 SOCIAL             🏛️ GOVERNANCE   │
 │   ─────────────────         ──────────────         ───────────── │
@@ -68,7 +90,7 @@ Environmental + Social + Governance — all three pillars, one login.
 │              🏆 GAMIFICATION        💬 ECOBOT AI                  │
 │              ─────────────         ──────────────                 │
 │              XP + Points           Gemini 2.0 Flash               │
-│              Auto-unlock badges    LangChain powered               │
+│              Auto-unlock badges    LangChain powered              │
 │              Live leaderboards     <200ms local fallback          │
 └──────────────────────────────────────────────────────────────────┘
 ```
