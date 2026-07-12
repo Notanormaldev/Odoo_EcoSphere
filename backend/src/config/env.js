@@ -3,8 +3,8 @@ dotenv.config();
 
 export const config = {
   mongoUri: process.env.MONGO_URI,
-  jwtSecret: process.env.JWT_SECRET,
-  jwtRefreshSecret: process.env.JWT_REFRESH_SECRET,
+  jwtSecret: process.env.JWT_SECRET || 'ecosphere_jwt_access_secret_production_key_987654321',
+  jwtRefreshSecret: process.env.JWT_REFRESH_SECRET || 'ecosphere_jwt_refresh_secret_production_key_123456789',
   jwtExpiresIn: '15m',
   jwtRefreshExpiresIn: '7d',
   googleClientId: process.env.GOOGLE_CLIENT_ID,

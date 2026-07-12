@@ -16,9 +16,9 @@ EcoSphere is a full-stack **ESG (Environmental, Social, and Governance) Manageme
 | <img src="screenshots/reports_desktop.png" alt="Reports & Analytics Dashboard" width="820" /> |
 
 ### 📱 Mobile Responsiveness
-| Mobile Dashboard | Mobile Governance |
-|---|---|
-| <img src="screenshots/dashboard_mobile.png" alt="Mobile Dashboard View" width="260" /> | <img src="screenshots/governance_mobile.png" alt="Mobile Governance Policies" width="260" /> |
+| Mobile Dashboard | Mobile Governance | Mobile Social |
+|---|---|---|
+| <img src="screenshots/dashboard_mobile.png" alt="Mobile Dashboard View" width="260" /> | <img src="screenshots/governance_mobile.png" alt="Mobile Governance Policies" width="260" /> | <img src="screenshots/social_mobile.png" alt="Mobile Social View" width="260" /> |
 
 ---
 
