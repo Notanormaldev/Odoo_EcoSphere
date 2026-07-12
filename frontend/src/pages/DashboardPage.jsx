@@ -10,9 +10,11 @@ import { formatNumber, formatCO2 } from '@shared/utils/number';
 import { formatDate } from '@shared/utils/date';
 
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+import { Leaf, Target, Heart, Trophy, AlertTriangle, Users } from 'lucide-react';
+
 const SCORE_COLORS = { Environmental: '#2D5016', Social: '#B45309', Governance: '#1D4ED8' };
 
-function KPICard({ label, value, unit = '', icon, trend, trendLabel }) {
+function KPICard({ label, value, unit = '', icon: Icon, trend, trendLabel }) {
   return (
     <div className="kpi-card">
       <div className="kpi-card-label">{label}</div>
@@ -25,7 +27,9 @@ function KPICard({ label, value, unit = '', icon, trend, trendLabel }) {
           {trend >= 0 ? '↑' : '↓'} {Math.abs(trend)}% {trendLabel}
         </div>
       )}
-      <div className="kpi-card-icon">{icon}</div>
+      <div className="kpi-card-icon">
+        {Icon && <Icon size={22} strokeWidth={2} style={{ color: 'var(--color-stone-400)' }} />}
+      </div>
     </div>
   );
 }
@@ -90,17 +94,17 @@ export default function DashboardPage() {
         <KPICard
           label="Total CO₂ Emissions"
           value={summary?.kpi?.totalCO2e ? formatCO2(summary.kpi.totalCO2e) : '—'}
-          icon="🌿"
+          icon={Leaf}
         />
-        <KPICard label="Active Goals"      value={formatNumber(summary?.kpi?.activeGoals)}       icon="🎯" />
-        <KPICard label="CSR Participations" value={formatNumber(summary?.kpi?.csrParticipations)} icon="🤝" />
-        <KPICard label="Challenges Completed" value={formatNumber(summary?.kpi?.challengeCompletions)} icon="🏆" />
+        <KPICard label="Active Goals"      value={formatNumber(summary?.kpi?.activeGoals)}       icon={Target} />
+        <KPICard label="CSR Participations" value={formatNumber(summary?.kpi?.csrParticipations)} icon={Heart} />
+        <KPICard label="Challenges Completed" value={formatNumber(summary?.kpi?.challengeCompletions)} icon={Trophy} />
         <KPICard
           label="Open Issues"
           value={formatNumber(summary?.kpi?.openComplianceIssues)}
-          icon="⚠️"
+          icon={AlertTriangle}
         />
-        <KPICard label="Active Employees" value={formatNumber(summary?.kpi?.activeEmployees)} icon="👥" />
+        <KPICard label="Active Employees" value={formatNumber(summary?.kpi?.activeEmployees)} icon={Users} />
       </div>
 
       {/* Charts row */}
