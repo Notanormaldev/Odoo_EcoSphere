@@ -10,6 +10,14 @@ import ESGConfig from '../models/ESGConfig.js';
 import EnvironmentalGoal from '../models/EnvironmentalGoal.js';
 import CSRActivity from '../models/CSRActivity.js';
 import Challenge from '../models/Challenge.js';
+import CarbonTransaction from '../models/CarbonTransaction.js';
+import ESGPolicy from '../models/ESGPolicy.js';
+import PolicyAcknowledgement from '../models/PolicyAcknowledgement.js';
+import Audit from '../models/Audit.js';
+import ComplianceIssue from '../models/ComplianceIssue.js';
+import DepartmentScore from '../models/DepartmentScore.js';
+import EmployeeParticipation from '../models/EmployeeParticipation.js';
+import ChallengeParticipation from '../models/ChallengeParticipation.js';
 
 dotenv.config({ path: './.env' });
 
@@ -34,6 +42,14 @@ const seedData = async () => {
       EnvironmentalGoal.deleteMany({}),
       CSRActivity.deleteMany({}),
       Challenge.deleteMany({}),
+      CarbonTransaction.deleteMany({}),
+      ESGPolicy.deleteMany({}),
+      PolicyAcknowledgement.deleteMany({}),
+      Audit.deleteMany({}),
+      ComplianceIssue.deleteMany({}),
+      DepartmentScore.deleteMany({}),
+      EmployeeParticipation.deleteMany({}),
+      ChallengeParticipation.deleteMany({}),
     ]);
 
     // 1. Create ESG Config
@@ -129,6 +145,121 @@ const seedData = async () => {
     await EnvironmentalGoal.create([
       { name: 'Reduce Energy Consumption by 10%', description: 'Decrease monthly electricity usage across Engineering department.', department: engDept._id, targetCO2: 5000, currentCO2: 1500, deadline: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), status: 'On Track', createdBy: adminUser._id },
       { name: 'Commute emission reduction target', description: 'Aim to reduce overall commuting footprint.', department: hrDept._id, targetCO2: 2000, currentCO2: 500, deadline: new Date(Date.now() + 180 * 24 * 60 * 60 * 1000), status: 'Active', createdBy: adminUser._id },
+    ]);
+
+    // 10. Seed Employee Users
+    console.log('Seeding Employees...');
+    const employees = await User.create([
+      { name: 'Jane Doe', email: 'jane@ecosphere.com', password: 'Password123', role: 'employee', employeeId: 'EMP002', designation: 'HR Coordinator', department: hrDept._id, xp: 450, points: 350, isEmailVerified: true },
+      { name: 'John Smith', email: 'john@ecosphere.com', password: 'Password123', role: 'employee', employeeId: 'EMP003', designation: 'Software Engineer', department: engDept._id, xp: 780, points: 620, isEmailVerified: true },
+      { name: 'Alice Johnson', email: 'alice@ecosphere.com', password: 'Password123', role: 'employee', employeeId: 'EMP004', designation: 'Account Executive', department: salesDept._id, xp: 300, points: 250, isEmailVerified: true },
+      { name: 'Bob Wilson', email: 'bob@ecosphere.com', password: 'Password123', role: 'manager', employeeId: 'EMP005', designation: 'Operations Manager', department: opsDept._id, xp: 950, points: 800, isEmailVerified: true },
+    ]);
+
+    // 11. Seed Carbon Transactions (Emissions)
+    console.log('Seeding Carbon Transactions...');
+    const now = new Date();
+    const mockTransactions = [];
+    const depts = [hrDept, engDept, salesDept, opsDept];
+
+    // Helper to generate dates in previous months
+    const getPastDate = (monthsAgo, day) => {
+      const d = new Date(now.getFullYear(), now.getMonth() - monthsAgo, day);
+      return d;
+    };
+
+    // Monthly data across last 6 months (5 months ago to 0 months ago)
+    for (let i = 5; i >= 0; i--) {
+      depts.forEach((dept) => {
+        // Scope 1: Diesel Generators / Combustions
+        mockTransactions.push({
+          department: dept._id,
+          activityType: 'Electricity',
+          scope: 'Scope 1',
+          fuelType: 'Diesel',
+          quantity: 200 + Math.floor(Math.random() * 100),
+          unit: 'litres',
+          co2e: 500 + Math.floor(Math.random() * 250),
+          loggedBy: employees[1]._id,
+          transactionDate: getPastDate(i, 5),
+          notes: `${dept.name} diesel generator backup fuel`,
+          status: 'Approved',
+        });
+
+        // Scope 2: Purchased Electricity
+        mockTransactions.push({
+          department: dept._id,
+          activityType: 'Electricity',
+          scope: 'Scope 2',
+          quantity: 1200 + Math.floor(Math.random() * 800),
+          unit: 'kWh',
+          co2e: 980 + Math.floor(Math.random() * 650),
+          loggedBy: employees[3]._id,
+          transactionDate: getPastDate(i, 15),
+          notes: `${dept.name} utility electrical bill`,
+          status: 'Approved',
+        });
+
+        // Scope 3: Air Travel / Employee Commute
+        mockTransactions.push({
+          department: dept._id,
+          activityType: 'Travel',
+          scope: 'Scope 3',
+          vehicleType: 'Car',
+          distance: 1500 + Math.floor(Math.random() * 1000),
+          unit: 'km',
+          co2e: 270 + Math.floor(Math.random() * 180),
+          loggedBy: employees[0]._id,
+          transactionDate: getPastDate(i, 20),
+          notes: `${dept.name} employee commuting distances`,
+          status: 'Approved',
+        });
+      });
+    }
+
+    await CarbonTransaction.create(mockTransactions);
+
+    // 12. Seed ESG Policies
+    console.log('Seeding ESG Policies...');
+    const policies = await ESGPolicy.create([
+      { title: 'Supplier Code of Conduct', description: 'Mandates sustainable practices, fair labor, and ethical governance standards for all company suppliers and vendors.', category: 'Governance', status: 'Published', version: 'v1.2', fileUrl: 'https://ik.imagekit.io/ecosphere/supplier_code.pdf', createdBy: adminUser._id },
+      { title: 'Sustainable Office Commuting', description: 'Policy supporting hybrid schedules, public transit stipends, and bicycle facilities to reduce Scope 3 employee commuting emissions.', category: 'Environmental', status: 'Published', version: 'v2.0', fileUrl: 'https://ik.imagekit.io/ecosphere/commute_policy.pdf', createdBy: adminUser._id },
+      { title: 'Equal Opportunity and Diversity Policy', description: 'Sets frameworks for anti-harassment, pay parity reviews, and transparent hiring metrics across all branches.', category: 'Social', status: 'Published', version: 'v1.0', fileUrl: 'https://ik.imagekit.io/ecosphere/diversity_policy.pdf', createdBy: adminUser._id },
+    ]);
+
+    // 13. Policy Acknowledgements
+    console.log('Seeding Policy Acknowledgements...');
+    await PolicyAcknowledgement.create([
+      { user: employees[0]._id, policy: policies[0]._id, acknowledgedAt: getPastDate(1, 4) },
+      { user: employees[0]._id, policy: policies[1]._id, acknowledgedAt: getPastDate(1, 4) },
+      { user: employees[1]._id, policy: policies[1]._id, acknowledgedAt: getPastDate(1, 10) },
+      { user: employees[2]._id, policy: policies[0]._id, acknowledgedAt: getPastDate(0, 2) },
+      { user: employees[3]._id, policy: policies[2]._id, acknowledgedAt: getPastDate(0, 1) },
+    ]);
+
+    // 14. Seed Audits
+    console.log('Seeding Audits...');
+    await Audit.create([
+      { title: 'Q1 Scope 1 & 2 Emissions Audit', scope: 'Environmental', status: 'Completed', startDate: getPastDate(2, 1), endDate: getPastDate(2, 5), leadAuditor: 'Bob Wilson', findings: 2, recommendations: 'Improve Diesel fuel receipt scanning accuracy; install smart electric meters on main floor.' },
+      { title: 'Supply Chain Labor Rights Audit', scope: 'Social', status: 'In Progress', startDate: getPastDate(0, 10), leadAuditor: 'Jane Doe', findings: 0, recommendations: 'Ongoing inspection of supplier assembly facilities.' },
+      { title: 'Anti-Corruption compliance check', scope: 'Governance', status: 'Scheduled', startDate: getPastDate(-1, 15), leadAuditor: 'External Consultant' },
+    ]);
+
+    // 15. Seed Compliance Issues
+    console.log('Seeding Compliance Issues...');
+    await ComplianceIssue.create([
+      { title: 'Improper e-waste recycling in IT department', description: 'Found old monitors and batteries discarded in standard municipal waste bins.', category: 'Environmental', severity: 'High', status: 'Open', assignee: employees[1]._id, dueDate: getPastDate(-1, 30) },
+      { title: 'Missing Conflict Minerals vendor certificates', description: 'Purchasing division failed to acquire compliance declarations from two microchip manufacturers.', category: 'Governance', severity: 'Medium', status: 'In Progress', assignee: employees[2]._id, dueDate: getPastDate(0, 25) },
+      { title: 'Warehouse emergency exit path obstruction', description: 'Pallets of paper blocks blocking main evacuation corridor near loading bay.', category: 'Social', severity: 'High', status: 'Resolved', assignee: employees[3]._id, dueDate: getPastDate(1, 5), resolutionNotes: 'Pallets relocated to secondary rack storage. Verified clearance pathway.' },
+    ]);
+
+    // 16. Seed Department Scores
+    console.log('Seeding Department Scores...');
+    await DepartmentScore.create([
+      { department: hrDept._id, month: now.getMonth() + 1, year: now.getFullYear(), environmentalScore: 82, socialScore: 95, governanceScore: 88, overallScore: 88.3 },
+      { department: engDept._id, month: now.getMonth() + 1, year: now.getFullYear(), environmentalScore: 76, socialScore: 80, governanceScore: 85, overallScore: 80.3 },
+      { department: salesDept._id, month: now.getMonth() + 1, year: now.getFullYear(), environmentalScore: 68, socialScore: 88, governanceScore: 78, overallScore: 78.0 },
+      { department: opsDept._id, month: now.getMonth() + 1, year: now.getFullYear(), environmentalScore: 90, socialScore: 82, governanceScore: 92, overallScore: 88.0 },
     ]);
 
     console.log('Seeding completed successfully!');
