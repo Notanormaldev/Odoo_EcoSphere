@@ -30,6 +30,9 @@ import { logger } from './src/utils/logger.js';
 
 const app = express();
 
+// Trust proxy headers for accurate client IP resolution behind Render load balancers
+app.set('trust proxy', 1);
+
 // ─── Security & Core Middleware ──────────────────────────────────────────────
 app.use(helmet({
   crossOriginResourcePolicy: { policy: 'cross-origin' },
@@ -43,17 +46,19 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
-app.use(morgan(config.nodeEnv === 'development' ? 'dev' : 'combined'));
+app.use(morgan(config.nodeEnv === 'production' ? 'combined' : 'dev'));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // ─── Rate Limiting ───────────────────────────────────────────────────────────
 const globalLimiter = createLimiter(500, 15);
 const authLimiter = createLimiter(20, 15);
+const chatbotLimiter = createLimiter(30, 15); // limit chatbot queries to 30 per 15 min
 
 app.use('/api/', globalLimiter);
 app.use('/api/auth/login', authLimiter);
 app.use('/api/auth/register', authLimiter);
+app.use('/api/chatbot/chat', chatbotLimiter);
 
 // ─── Passport ────────────────────────────────────────────────────────────────
 configurePassport();
