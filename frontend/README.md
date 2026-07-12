@@ -1,16 +1,17 @@
-# React + Vite
+# EcoSphere Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Vite and React powered client application implementing a structured 4-layer architecture.
 
-Currently, two official plugins are available:
+## Folder Structure
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- `src/app/`: App provider configuration, routing and global state management (Zustand).
+- `src/pages/`: Main application routing targets (Dashboard, Environmental, Social, etc.).
+- `src/features/`: Complex functional components with business logic.
+- `src/entities/`: Simple data representation layers.
+- `src/shared/`: Shared utilities, API clients (axios), layout wrappers and assets.
 
-## React Compiler
+## Design Philosophy
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+- **Aesthetics**: Warm forest green, stone, and copper accents to convey sustainability.
+- **Rules**: Explicitly avoids neon colors, unnecessary borders, gradient boxes and "AI-looking" templates.
+- **Responsiveness**: Entirely responsive layout supporting collapsable sidebars and mobile devices.
