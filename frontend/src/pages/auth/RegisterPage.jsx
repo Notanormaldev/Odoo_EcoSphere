@@ -105,12 +105,21 @@ export default function RegisterPage() {
                 </div>
                 <div className="form-group">
                   <label className="form-label">Designation</label>
-                  <input
-                    type="text" className="form-input"
-                    placeholder="Job title"
+                  <select
+                    className="form-input"
                     value={form.designation}
                     onChange={(e) => setForm({ ...form, designation: e.target.value })}
-                  />
+                  >
+                    <option value="">Select job title...</option>
+                    <option value="Software Engineer">Software Engineer</option>
+                    <option value="Sustainability Consultant">Sustainability Consultant</option>
+                    <option value="CSR Manager">CSR Manager</option>
+                    <option value="Governance Compliance Lead">Governance Compliance Lead</option>
+                    <option value="Operations Coordinator">Operations Coordinator</option>
+                    <option value="Financial Analyst">Financial Analyst</option>
+                    <option value="Human Resources Manager">Human Resources Manager</option>
+                    <option value="Chief Sustainability Officer (CSO)">Chief Sustainability Officer (CSO)</option>
+                  </select>
                 </div>
               </div>
 
