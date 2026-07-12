@@ -99,6 +99,17 @@ import fs from 'fs';
 const distPath = path.join(__dirname, '../frontend/dist');
 if (fs.existsSync(distPath)) {
   app.use(express.static(distPath));
+
+  // Direct favicon.ico request fallback (prevents returning SPA index.html)
+  app.get('/favicon.ico', (req, res) => {
+    const faviconPath = path.join(distPath, 'favicon.svg');
+    if (fs.existsSync(faviconPath)) {
+      res.setHeader('Content-Type', 'image/svg+xml');
+      return res.sendFile(faviconPath);
+    }
+    res.status(404).end();
+  });
+
   app.get('*', (req, res) => {
     res.sendFile(path.join(distPath, 'index.html'));
   });
@@ -113,6 +124,20 @@ const startServer = async () => {
   try {
     await connectDB();
     connectRedis();
+
+    // Auto-seed database if empty (crucial for zero-config Render database deployments)
+    try {
+      const User = (await import('./src/models/User.js')).default;
+      const userCount = await User.countDocuments();
+      if (userCount === 0) {
+        logger.info('🌱 No users found in database. Auto-seeding initial ESG data...');
+        const { seedData } = await import('./src/scripts/seed.js');
+        await seedData(false);
+        logger.info('✅ Auto-seeding completed successfully!');
+      }
+    } catch (seedErr) {
+      logger.error('Auto-seeding check failed:', seedErr);
+    }
 
     app.listen(config.port, () => {
       logger.info(`EcoSphere API running on port ${config.port}`);

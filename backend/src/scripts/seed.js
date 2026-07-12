@@ -23,10 +23,13 @@ dotenv.config({ path: './.env' });
 
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/ecosphere';
 
-const seedData = async () => {
+export const seedData = async (shouldExit = true) => {
   try {
     console.log('Connecting to database...');
-    await mongoose.connect(MONGO_URI);
+    // Only connect if mongoose is not already connected
+    if (mongoose.connection.readyState === 0) {
+      await mongoose.connect(MONGO_URI);
+    }
     console.log('Connected to database!');
 
     // Clear existing data
@@ -358,11 +361,15 @@ const seedData = async () => {
     ]);
 
     console.log('Seeding completed successfully!');
-    process.exit(0);
+    if (shouldExit) process.exit(0);
   } catch (error) {
     console.error('Seeding failed:', error);
-    process.exit(1);
+    if (shouldExit) process.exit(1);
+    throw error;
   }
 };
 
-seedData();
+// Check if run directly
+if (import.meta.url === `file://${process.argv[1]}` || (process.argv[1] && process.argv[1].endsWith('seed.js'))) {
+  seedData(true);
+}
