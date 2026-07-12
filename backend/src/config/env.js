@@ -24,6 +24,6 @@ export const config = {
   geminiApiKey: process.env.GOOGLE_GEMINI_API,
   nodeEnv: process.env.NODE_ENVIRONMENT || process.env.NODE_ENV || 'development',
   port: parseInt(process.env.PORT, 10) || 5000,
-  clientUrl: process.env.CLIENT_URL || 'http://localhost:5173',
+  clientUrl: process.env.CLIENT_URL || (process.env.RENDER ? 'https://odoo-ecosphere.onrender.com' : 'http://localhost:5173'),
   sessionSecret: process.env.SESSION_SECRET || 'ecosphere_secret',
 };
